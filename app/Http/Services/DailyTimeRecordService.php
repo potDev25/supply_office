@@ -209,11 +209,11 @@
                                     'billable_hours'       => 0,
                                     'approved_hours'       => 0,
                                     'premium_hours'        => 0,
-                                    'training_hours'   => 0,
-                                    'billable_amount'  => 0,
-                                    'premium_amount'   => 0,
-                                    'training_amount'  => 0,
-                                    'total_amount'     => 0,
+                                    'training_hours'       => 0,
+                                    'billable_amount'      => 0,
+                                    'premium_amount'       => 0,
+                                    'training_amount'      => 0,
+                                    'total_amount'         => 0,
                                 ];
                                 foreach ($distinct_dates as $date) {
                                     $final_data[$i]['children'][$campaign_key]['children'][$agent_key]['ot_hours_' . $date] = 0;
@@ -252,7 +252,7 @@
             }
         
             // Retrieve all necessary data in a single query and group by emp_id and date
-            $dates = DailyTimeRecord::select('emp_id', 'date', 'total_ot_hrs', 'total_hrs', 'billable')
+            $dates = DailyTimeRecord::select('emp_id', 'date', 'total_ot_hrs', 'total_hrs', 'billable', 'total_paid_hrs', 'billable_training')
                 ->whereIn('emp_id', $emp_ids)
                 ->whereBetween(DB::raw('DATE(date)'), [$date['start_date'], $date['end_date']])
                 ->get()
@@ -272,10 +272,10 @@
                                     $value['billable_hours_'.$date->date] = (float) $date->billable_training;
 
                                     if($date->billable == 1){
-                                        $value['training_hours_'.$date->date] = (float) $date->total_hrs;
+                                        $value['training_hours_'.$date->date] = (float) $date->total_paid_hrs;
                                         $value['total_hours_'.$date->date] = 0;
                                     }else{
-                                        $value['total_hours_'.$date->date]    = (float) $date->total_hrs;
+                                        $value['total_hours_'.$date->date]    = (float) $date->total_paid_hrs;
                                     }
                                 }
                             }
@@ -317,6 +317,21 @@
             * calculcate total_billable_hours
          */
         public function program_total_hours($final_data = [], $date_data){
+            // 'key'              => $program->id .'-'. $campaign->id,
+            // 'campaign_id'      => $campaign->id,
+            // 'description'      => 'Campaign name',  
+            // 'name'             => $campaign->campaign_name,
+            // 'total_ot_hours'   => 0,
+            // 'total_hours'      => 0,
+            // 'billable_hours'   => 0,
+            // 'approved_hours'   => 0,
+            // 'premium_hours'    => 0,
+            // 'training_hours'   => 0,
+            // 'billable_amount'  => 0,
+            // 'premium_amount'   => 0,
+            // 'training_amount'  => 0,
+            // 'total_amount'     => 0,
+
             for ($i = 0; $i < count($final_data); $i++) { 
                 foreach($final_data[$i]['children'] as $campaign_key  => $campaign){
                     foreach($date_data as $date){
@@ -325,6 +340,10 @@
                         $final_data[$i]['billable_hours_' . $date]   += $campaign['billable_hours_' . $date];
                     }
                     $final_data[$i]['approved_hours'] += $campaign['approved_hours'];
+                    $final_data[$i]['premium_hours'] += $campaign['premium_hours'];
+                    $final_data[$i]['training_hours'] += $campaign['training_hours'];
+                    $final_data[$i]['billable_amount'] += $campaign['billable_amount'];
+                    $final_data[$i]['training_amount'] += $campaign['training_amount'];
                 }
             }
 
@@ -344,6 +363,12 @@
             $footer_total_data['billable_hours_footer']                 = 0;
             $footer_total_data['approved_hours_footer']                 = 0;
             $footer_total_data['premium_hours_footer']                  = 0;
+            //
+            $footer_total_data['training_hours_footer']                 = 0;
+            $footer_total_data['billable_amount_footer']                = 0;
+            $footer_total_data['premium_amount_footer']                 = 0;
+            $footer_total_data['training_amount_footer']                = 0;
+            $footer_total_data['total_amount_footer']                   = 0;
 
             for ($i=0; $i < count($final_data); $i++) { 
                 foreach ($dates as $date) {
@@ -355,6 +380,26 @@
                 $footer_total_data['approved_hours_footer']             += $final_data[$i]['approved_hours'];
                 $footer_total_data['premium_hours_footer']              += $final_data[$i]['premium_hours'];
                 $footer_total_data['billable_hours_footer']             += $final_data[$i]['billable_hours'];
+                //
+                // 'key'              => $program->id,
+                // 'description'      => 'Program / Account',
+                // //Account name / Program Name
+                // 'name'             => $program->programName,
+                // 'total_ot_hours'   => 0,
+                // 'total_hours'      => 0,
+                // 'billable_hours'   => 0,
+                // 'approved_hours'   => 0,
+                // 'premium_hours'    => 0,
+                // 'training_hours'   => 0,
+                // 'billable_amount'  => 0,
+                // 'premium_amount'   => 0,
+                // 'training_amount'  => 0,
+                // 'total_amount'     => 0,
+                $footer_total_data['training_hours_footer']             += $final_data[$i]['training_hours'];
+                $footer_total_data['billable_amount_footer']            += $final_data[$i]['billable_amount'];
+                $footer_total_data['premium_amount_footer']             += $final_data[$i]['premium_amount'];
+                $footer_total_data['training_amount_footer']            += $final_data[$i]['training_amount'];
+                $footer_total_data['total_amount_footer']               += $final_data[$i]['total_amount'];
             }
 
             return $footer_total_data;
