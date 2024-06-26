@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DailyTimeRecordController;
 use App\Http\Controllers\TestController;
@@ -20,7 +21,17 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+
+    Route::controller(AuthController::class)->group(function () {
+        Route::post('/user/logout', 'logout');
+    });
+
+    Route::controller(ApplicantController::class)->group(function () {
+        Route::get('/applicants', 'index');
+        Route::post('/applicant/store', 'store');
+    });
 });
+
 
 Route::controller(AuthController::class)->group(function() {
     Route::post('/login', 'login');
