@@ -15,11 +15,11 @@ class ApplicantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $applicants = Applicant::select('applicants.*', 'applicants.id as applicant_id', 'media.*')
                     ->join('media', 'applicants.id', '=', 'media.applicant_id')
-                    ->orderBy('applicants.id', 'DESC')->paginate(10);
+                    ->orderBy('applicants.lastname', 'ASC')->paginate($request->limit);
 
         return response($applicants);
     }
@@ -78,6 +78,17 @@ class ApplicantController extends Controller
         return response(200);
     }
 
+    public function batch_delete(Request $request){
+        $ids = $request->all();
+
+        DB::transaction(function () use (&$ids){
+            User::whereIn('id', $ids)->delete();
+            Applicant::whereIn('user_id', $ids)->delete();
+        });
+
+        return response(200);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -97,8 +108,13 @@ class ApplicantController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        DB::transaction(function () use (&$user){
+            Applicant::where('user_id', $user->id)->delete();
+            $user->delete();
+        });
+
+        return response(200);
     }
 }

@@ -29,6 +29,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::controller(ApplicantController::class)->group(function () {
         Route::get('/applicants', 'index');
         Route::post('/applicant/store', 'store');
+        Route::post('/applicants/batch-delete', 'batch_delete');
+        Route::post('/applicants/destroy/{user}', 'destroy');
     });
 });
 
