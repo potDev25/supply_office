@@ -17,8 +17,9 @@ class ApplicantController extends Controller
      */
     public function index(Request $request)
     {
-        $applicants = Applicant::select('applicants.*', 'applicants.id as applicant_id', 'media.*')
+        $applicants = Applicant::select('applicants.*', 'applicants.id as applicant_id', 'media.*', 'users.*')
                     ->join('media', 'applicants.id', '=', 'media.applicant_id')
+                    ->join('users', 'applicants.user_id', '=', 'users.id')
                     ->orderBy('applicants.lastname', 'ASC')->paginate($request->limit);
 
         return response($applicants);
@@ -35,19 +36,11 @@ class ApplicantController extends Controller
             $payload['profile_image'] = $request->file('profile_image')->store('media', 'public');
         }
 
-        if($request->hasFile('sanitary_permit')){
-            $payload['sanitary_permit'] = $request->file('sanitary_permit')->store('media', 'public');
-        }
-
-        if($request->hasFile('barangay_clearance')){
-            $payload['barangay_clearance'] = $request->file('barangay_clearance')->store('media', 'public');
-        }
-
         DB::transaction(function () use (&$payload){
             $user = User::create([
                 'lastname' => $payload['lastname'],
                 'firstname' => $payload['firstname'],
-                'role' => 'applicant',
+                'role' => 'admin',
                 'email' => $payload['email'],
                 'username' => $payload['username'],
                 'password' => Hash::make($payload['password']),
@@ -59,19 +52,15 @@ class ApplicantController extends Controller
                 "lastname" => $payload['lastname'],
                 "firstname" => $payload['firstname'],
                 "middlename" => $payload['middlename'],
-                "province" => $payload['province'],
-                "city" => $payload['city'],
-                "barangay" => $payload['barangay'],
                 "email" => $payload['email'],
                 "contact_number" =>  $payload['contact_number'],
                 "username" =>  $payload['username'],
+                "position" => $payload['position']
             ]);
 
             Media::create([
                 'applicant_id' => $applicant->id,
                 'profile_image' => $payload['profile_image'],
-                'sanitary_permit' => $payload['sanitary_permit'],
-                'barangay_clearance' => $payload['barangay_clearance'],
             ]);
         });
 

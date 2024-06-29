@@ -25,17 +25,13 @@ class ApplicantRequest extends FormRequest
             "lastname" => 'required',
             "firstname" => 'required',
             "middlename" => 'required',
-            "province" => 'required',
-            "city" => 'required',
-            "barangay" => 'required',
+            "position" => 'required',
             "email" => 'required|unique:users,email',
             "contact_number" =>  'required',
             "username" =>  'required|unique:users,username',
             "password" =>  'required',
             "password_confirmation" =>  'required',
             "profile_image" =>  'required|mimes:png,jpg',
-            "sanitary_permit" =>  'required|mimes:pdf',
-            "barangay_clearance" =>  'required|mimes:pdf'
         ];
     }
 }
