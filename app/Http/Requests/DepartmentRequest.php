@@ -23,7 +23,8 @@ class DepartmentRequest extends FormRequest
     {
         return [
             'department_name' => 'required',
-            'logo' => 'required"mimes:png,jpg'
+            'department_type' => 'required',
+            'logo' => 'required|mimes:png,jpg'
         ];
     }
 }

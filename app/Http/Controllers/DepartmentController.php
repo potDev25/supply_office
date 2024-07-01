@@ -11,9 +11,9 @@ class DepartmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::orderBy('department_name', 'ASC')->get();
+        $departments = Department::orderBy('department_name', 'ASC')->paginate($request->limit);
 
         return response($departments);
     }
@@ -24,6 +24,13 @@ class DepartmentController extends Controller
     public function store(DepartmentRequest $request)
     {
         $data = $request->validated();
+
+        $string = $data['department_name'];
+        $data['name'] = str_replace(' ', '_', $string);
+
+        if($request->hasFile('logo')){
+            $data['logo'] = $request->file('logo')->store('media', 'public');
+        }
 
         Department::create($data);
 
@@ -49,8 +56,17 @@ class DepartmentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Department $department)
     {
-        //
+        $department->delete();
+        return response(200);
+    }
+
+    public function batch_delete(Request $request){
+        $ids = $request->all();
+
+        Department::whereIn('id', $ids)->delete();
+
+        return response(200);
     }
 }

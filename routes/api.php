@@ -19,11 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware('auth:sanctum')->group(function() {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-
     Route::controller(AuthController::class)->group(function () {
+        Route::get('/user', 'index');
         Route::post('/user/logout', 'logout');
     });
 
@@ -37,6 +34,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::controller(DepartmentController::class)->group(function () {
         Route::get('/departments', 'index');
         Route::post('/departments/store', 'store');
+        Route::post('/departments/batch-delete', 'batch_delete');
+        Route::post('/departments/destroy/{department}', 'destroy');
     });
 });
 

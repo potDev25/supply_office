@@ -3,11 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+
+    public function index(Request $request){
+        $user = $request->user();
+        $departments = Department::orderBy('department_name', 'ASC')->get();
+        
+        return response(compact('user', 'departments'));
+    }
+
     public function login(LoginRequest $request){
         $credentials = $request->validated();
 
