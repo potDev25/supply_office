@@ -42,6 +42,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::controller(DocumentController::class)->group(function () {
         Route::get('/documents', 'index');
         Route::post('/documents/store', 'store');
+        Route::post('/documents/cancel/{document}', 'cancel');
+        Route::post('/documents/status/{document}', 'changeStatus');
+        Route::post('/documents/return-status/{document}', 'returnStatus');
         Route::post('/documents/batch-delete', 'batch_delete');
         Route::post('/documents/destroy/{document}', 'destroy');
     });

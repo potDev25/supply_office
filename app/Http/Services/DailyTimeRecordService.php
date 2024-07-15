@@ -227,6 +227,9 @@
                                 foreach ($distinct_dates as $date) {
                                     $final_data[$i]['children'][$campaign_key]['children'][$agent_key]['training_hours_' . $date] = 0;
                                 }
+                                foreach ($distinct_dates as $date) {
+                                    $final_data[$i]['children'][$campaign_key]['children'][$agent_key]['status_' . $date] = 0;
+                                }
                             }
 
                         }
