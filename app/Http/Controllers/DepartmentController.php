@@ -34,7 +34,9 @@ class DepartmentController extends Controller
 
         Department::create($data);
 
-        return response(200);
+        $departments = Department::orderBy('department_name', 'ASC')->get();
+
+        return response($departments);
     }
 
     /**

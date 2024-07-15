@@ -31,7 +31,15 @@ class ApplicantRequest extends FormRequest
             "username" =>  'required|unique:users,username',
             "password" =>  'required',
             "password_confirmation" =>  'required',
-            "profile_image" =>  'required|mimes:png,jpg',
+            "profile_image" =>  'nullable|mimes:png,jpg',
+            "department_id" => 'nullable'
         ];
     }
+
+    // public function messages() : array
+    // {
+    //     return [
+    //         "department_id.required" => "Please select department"
+    //     ];
+    // }
 }

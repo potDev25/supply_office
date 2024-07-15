@@ -17,9 +17,10 @@ class ApplicantController extends Controller
      */
     public function index(Request $request)
     {
-        $applicants = Applicant::select('applicants.*', 'applicants.id as applicant_id', 'media.*', 'users.*')
+        $applicants = Applicant::select('applicants.*', 'applicants.id as applicant_id', 'media.*', 'users.*', 'departments.*')
                     ->join('media', 'applicants.id', '=', 'media.applicant_id')
                     ->join('users', 'applicants.user_id', '=', 'users.id')
+                    ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
                     ->orderBy('applicants.lastname', 'ASC')->paginate($request->limit);
 
         return response($applicants);
@@ -44,6 +45,7 @@ class ApplicantController extends Controller
                 'email' => $payload['email'],
                 'username' => $payload['username'],
                 'password' => Hash::make($payload['password']),
+                'department_id' => $payload['department_id']
             ]);
 
             $payload['user_id'] = $user->id;

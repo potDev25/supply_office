@@ -4,6 +4,7 @@ use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DailyTimeRecordController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,13 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::post('/departments/store', 'store');
         Route::post('/departments/batch-delete', 'batch_delete');
         Route::post('/departments/destroy/{department}', 'destroy');
+    });
+
+    Route::controller(DocumentController::class)->group(function () {
+        Route::get('/documents', 'index');
+        Route::post('/documents/store', 'store');
+        Route::post('/documents/batch-delete', 'batch_delete');
+        Route::post('/documents/destroy/{document}', 'destroy');
     });
 });
 
