@@ -93,6 +93,21 @@ class DocumentController extends Controller
         $document->save();
     }
 
+    public function updateFile(Document $document, Request $request){
+        $data = $request->validate([
+            'document' => 'required|mimes:pdf',
+            'status' => 'required'
+        ]);
+
+        if($request->hasFile('document')){
+            $data['document'] = $request->file('document')->store('media', 'public');
+        }
+
+        $document->status = $data['status'];
+        $document->document = $data['document'];
+        $document->save();
+    }
+
     /**
      * Display the specified resource.
      */
