@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DepartmentRequest;
+use App\Http\Resources\DepartmentCollection;
 use App\Models\Department;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,13 @@ class DepartmentController extends Controller
     {
         $departments = Department::orderBy('department_name', 'ASC')->paginate($request->limit);
 
-        return response($departments);
+        if(auth()->user()->role === 'general admin'){
+            $archive = new DepartmentCollection(Department::orderBy('department_name', 'ASC')->paginate($request->limit));
+        }else{
+            $archive = new DepartmentCollection(Department::where('id', auth()->user()->department_id)->orderBy('department_name', 'ASC')->get());
+        }
+
+        return response(compact('departments', 'archive'));
     }
 
     /**

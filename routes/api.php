@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::controller(DocumentController::class)->group(function () {
         Route::get('/documents', 'index');
+        Route::get('/documents/archives/{department}', 'archives');
         Route::post('/documents/store', 'store');
         Route::post('/documents/cancel/{document}', 'cancel');
         Route::post('/documents/status/{document}', 'changeStatus');
