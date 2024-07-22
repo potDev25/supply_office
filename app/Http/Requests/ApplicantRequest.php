@@ -32,7 +32,8 @@ class ApplicantRequest extends FormRequest
             "password" =>  'required',
             "password_confirmation" =>  'required',
             "profile_image" =>  'nullable|mimes:png,jpg',
-            "department_id" => 'nullable'
+            "department_id" => 'nullable',
+            "role" => 'required'
         ];
     }
 

@@ -23,7 +23,7 @@ class UpdateStatusRequest extends FormRequest
     {
         return [
             'status' => 'required',
-            'deadline' => 'required_if:status,!done',
+            // 'deadline' => 'required_if:status,!done',
         ];
     }
 }

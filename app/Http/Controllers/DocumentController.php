@@ -28,7 +28,7 @@ class DocumentController extends Controller
                 ->join('applicants', 'users.id', '=', 'applicants.user_id')
                 ->join('media', 'applicants.id', '=', 'media.applicant_id')
                 ->leftJoin('departments', 'documents.department_id', '=', 'departments.id')
-                ->where('documents.status', '!=', 'done')
+                ->where('documents.status', '!=', 'consolidated')
                 ->where('documents.status', '!=', 'cancel')
                 ->where('documents.status', '!=', 'return')
                 ->orderBy('documents.created_at', 'DESC')->get();
@@ -47,7 +47,7 @@ class DocumentController extends Controller
             ->join('applicants', 'users.id', '=', 'applicants.user_id')
             ->join('media', 'applicants.id', '=', 'media.applicant_id')
             ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
-            ->where('documents.status', '!=', 'done')
+            ->where('documents.status', '!=', 'consolidated')
             ->where('documents.status', '!=', 'cancel')
             ->where('documents.user_id', auth()->user()->id)
             ->orderBy('documents.created_at', 'DESC')->get();
@@ -136,8 +136,8 @@ class DocumentController extends Controller
     public function changeStatus(Document $document, UpdateStatusRequest $request){
         $data = $request->validated();
         $document->status = $data['status'];
-        $document->deadline = $data['deadline'];
-        if($data['status'] === 'done'){
+        // $document->deadline = $data['deadline'];
+        if($data['status'] === 'consolidated'){
             $document->date_complied = Carbon::now();
         }
         $document->save();
