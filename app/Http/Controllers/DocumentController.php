@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TransactionChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DocumentRequest;
 use App\Http\Requests\UpdateStatusRequest;
 use App\Models\Department;
 use App\Models\Document;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DocumentController extends Controller
 {
@@ -24,7 +27,7 @@ class DocumentController extends Controller
                 ->join('users', 'documents.user_id', '=', 'users.id')
                 ->join('applicants', 'users.id', '=', 'applicants.user_id')
                 ->join('media', 'applicants.id', '=', 'media.applicant_id')
-                ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
+                ->leftJoin('departments', 'documents.department_id', '=', 'departments.id')
                 ->where('documents.status', '!=', 'done')
                 ->where('documents.status', '!=', 'cancel')
                 ->where('documents.status', '!=', 'return')
@@ -71,7 +74,7 @@ class DocumentController extends Controller
                 ->join('users', 'documents.user_id', '=', 'users.id')
                 ->join('applicants', 'users.id', '=', 'applicants.user_id')
                 ->join('media', 'applicants.id', '=', 'media.applicant_id')
-                ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
+                ->leftJoin('departments', 'documents.department_id', '=', 'departments.id')
                 ->where('documents.department_id', $department->id)
                 // ->where('documents.status', '!=', 'cancel')
                 // ->where('documents.status', '!=', 'return')
@@ -81,7 +84,7 @@ class DocumentController extends Controller
                 ->join('users', 'documents.user_id', '=', 'users.id')
                 ->join('applicants', 'users.id', '=', 'applicants.user_id')
                 ->join('media', 'applicants.id', '=', 'media.applicant_id')
-                ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
+                ->leftJoin('departments', 'documents.department_id', '=', 'departments.id')
                 ->where('documents.status', $request->status)
                 ->where('documents.department_id', $department->id)
                 ->orderBy('documents.created_at', 'DESC')->get();
@@ -134,7 +137,12 @@ class DocumentController extends Controller
         $data = $request->validated();
         $document->status = $data['status'];
         $document->deadline = $data['deadline'];
+        if($data['status'] === 'done'){
+            $document->date_complied = Carbon::now();
+        }
         $document->save();
+
+        event(new TransactionChanged($document));
     }
 
     public function returnStatus(Document $document, Request $request){
@@ -145,6 +153,9 @@ class DocumentController extends Controller
         $document->status = $data['status'];
         $document->message = $data['message'];
         $document->save();
+
+        event(new TransactionChanged($document));
+
     }
 
     public function updateFile(Document $document, Request $request){

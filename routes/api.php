@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DailyTimeRecordController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\LogsController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +24,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function() {
     Route::controller(AuthController::class)->group(function () {
         Route::get('/user', 'index');
+        Route::get('/users/user/{user}', 'getUser');
+        Route::post('/users/edit/{user}', 'editUser');
         Route::post('/user/logout', 'logout');
     });
 
@@ -49,6 +53,14 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::post('/documents/return-file-status/{document}', 'updateFile');
         Route::post('/documents/batch-delete', 'batch_delete');
         Route::post('/documents/destroy/{document}', 'destroy');
+    });
+
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('/reports', 'index');
+    });
+
+    Route::controller(LogsController::class)->group(function () {
+        Route::get('/process-logs/{document}', 'index');
     });
 });
 
