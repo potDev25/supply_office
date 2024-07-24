@@ -6,6 +6,7 @@ use App\Http\Controllers\DailyTimeRecordController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LogsController;
+use App\Http\Controllers\PurchaseDocumentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
@@ -61,6 +62,13 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::controller(LogsController::class)->group(function () {
         Route::get('/process-logs/{document}', 'index');
+    });
+
+    Route::controller(PurchaseDocumentController::class)->group(function () {
+        Route::get('/po-request', 'index');
+        Route::post('/po-request/store', 'store');
+        Route::post('/po-request/update-status/{document}', 'updateStatus');
+        Route::delete('/po-request/destroy/{purchase}', 'destroy');
     });
 });
 
