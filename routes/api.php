@@ -66,9 +66,12 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::controller(PurchaseDocumentController::class)->group(function () {
         Route::get('/po-request', 'index');
+        Route::get('/po-request/request', 'purchaseRequest');
         Route::post('/po-request/store', 'store');
+        Route::post('/po-request/po/{document}', 'storePo');
         Route::post('/po-request/update-status/{document}', 'updateStatus');
         Route::delete('/po-request/destroy/{purchase}', 'destroy');
+        Route::post('/po-request/po-destroy/{document}', 'poCancel');
     });
 });
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PurchaseRequestDocRequest;
 use App\Http\Requests\UpdateStatusRequest;
+use App\Http\Requests\UploadPORequest;
 use App\Models\PurchaseDocument;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,6 +17,18 @@ class PurchaseDocumentController extends Controller
     public function index()
     {
         $data = PurchaseDocument::whereYear('created_at', Carbon::now()->year)->where('pr_status', '!=', 'done')->get();
+        return response($data);
+    }
+
+    public function purchaseRequest()
+    {
+        if(auth()->user()->role === 'general admin'){
+            $data = PurchaseDocument::whereYear('created_at', Carbon::now()->year)->where('pr_status', 'awarded')
+            ->where('purchase_order', '!=', null)
+            ->get();
+        }else{
+            $data = PurchaseDocument::whereYear('created_at', Carbon::now()->year)->where('pr_status', 'awarded')->get();
+        }
         return response($data);
     }
 
@@ -32,6 +45,28 @@ class PurchaseDocumentController extends Controller
             $payload['purchase_request'] = $request->file('purchase_request')->store('media', 'public');
         }
         PurchaseDocument::create($payload);
+    }
+
+    public function storePo(PurchaseDocument $document, UploadPORequest $request)
+    {
+        $payload = $request->validated();
+
+        if($request->hasFile('purchase_order')){
+            $payload['purchase_order'] = $request->file('purchase_order')->store('media', 'public');
+        }
+        
+        $document->purchase_order = $payload['purchase_order'];
+        $document->po_request_date =  Carbon::now();
+        $document->po_status =  'for review';
+        $document->save();
+    }
+
+    public function poCancel(PurchaseDocument $document)
+    {
+        $document->purchase_order = null;
+        $document->po_request_date =  null;
+        $document->po_status =  null;
+        $document->save();
     }
 
     public function updateStatus(PurchaseDocument $document,UpdateStatusRequest $request){
