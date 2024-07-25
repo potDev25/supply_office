@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PurchaseDocumentEvent;
 use App\Http\Requests\PurchaseRequestDocRequest;
 use App\Http\Requests\UpdateStatusRequest;
 use App\Http\Requests\UploadPORequest;
@@ -16,7 +17,9 @@ class PurchaseDocumentController extends Controller
      */
     public function index()
     {
-        $data = PurchaseDocument::whereYear('created_at', Carbon::now()->year)->where('pr_status', '!=', 'done')->get();
+        $data = PurchaseDocument::whereYear('created_at', Carbon::now()->year)
+        ->where('pr_status', '!=', 'done')
+        ->where('po_status', '!=', 'done')->get();
         return response($data);
     }
 
@@ -24,6 +27,7 @@ class PurchaseDocumentController extends Controller
     {
         if(auth()->user()->role === 'general admin'){
             $data = PurchaseDocument::whereYear('created_at', Carbon::now()->year)->where('pr_status', 'awarded')
+            ->where('po_status', '!=', 'done')
             ->where('purchase_order', '!=', null)
             ->get();
         }else{
@@ -45,6 +49,7 @@ class PurchaseDocumentController extends Controller
             $payload['purchase_request'] = $request->file('purchase_request')->store('media', 'public');
         }
         PurchaseDocument::create($payload);
+        event(new PurchaseDocumentEvent);
     }
 
     public function storePo(PurchaseDocument $document, UploadPORequest $request)
@@ -59,6 +64,8 @@ class PurchaseDocumentController extends Controller
         $document->po_request_date =  Carbon::now();
         $document->po_status =  'for review';
         $document->save();
+
+        event(new PurchaseDocumentEvent);
     }
 
     public function poCancel(PurchaseDocument $document)
@@ -67,6 +74,8 @@ class PurchaseDocumentController extends Controller
         $document->po_request_date =  null;
         $document->po_status =  null;
         $document->save();
+
+        event(new PurchaseDocumentEvent);
     }
 
     public function updateStatus(PurchaseDocument $document,UpdateStatusRequest $request){
@@ -74,6 +83,20 @@ class PurchaseDocumentController extends Controller
         $document->pr_status = $data['status'];
         // $document->deadline = $data['deadline'];
         $document->save();
+
+        event(new PurchaseDocumentEvent);
+    }
+
+    public function updatePoStatus(PurchaseDocument $document,UpdateStatusRequest $request){
+        $data = $request->validated();
+        $document->po_status = $data['status'];
+        if($data['status'] === 'done'){
+            $document->pr_status = 'done';
+        }
+        // $document->deadline = $data['deadline'];
+        $document->save();
+
+        event(new PurchaseDocumentEvent);
     }
 
     /**

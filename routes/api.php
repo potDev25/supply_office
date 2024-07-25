@@ -70,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::post('/po-request/store', 'store');
         Route::post('/po-request/po/{document}', 'storePo');
         Route::post('/po-request/update-status/{document}', 'updateStatus');
+        Route::post('/po-request/update-po-status/{document}', 'updatePoStatus');
         Route::delete('/po-request/destroy/{purchase}', 'destroy');
         Route::post('/po-request/po-destroy/{document}', 'poCancel');
     });
