@@ -3,11 +3,13 @@
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DailyTimeRecordController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\PurchaseDocumentController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReturnStatusController;
 use App\Http\Controllers\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +30,10 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::get('/users/user/{user}', 'getUser');
         Route::post('/users/edit/{user}', 'editUser');
         Route::post('/user/logout', 'logout');
+    });
+
+    Route::controller(DashboardController::class)->group(function () {
+        Route::get('/dashboard', 'index');
     });
 
     Route::controller(ApplicantController::class)->group(function () {
@@ -62,6 +68,13 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::controller(LogsController::class)->group(function () {
         Route::get('/process-logs/{document}', 'index');
+    });
+
+    Route::controller(ReturnStatusController::class)->group(function () {
+        Route::get('/return-status', 'index');
+        Route::post('/return-status/store', 'store');
+        Route::post('/return-status/destroy/{id}', 'destroy');
+        Route::post('/return-status/batch-delete/', 'batch_delete');
     });
 
     Route::controller(PurchaseDocumentController::class)->group(function () {
