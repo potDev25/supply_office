@@ -12,6 +12,7 @@ use App\Http\Controllers\LogsController;
 use App\Http\Controllers\PurchaseDocumentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReturnStatusController;
+use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\TestController;
 use App\Http\Requests\CategoryRequest;
 use Illuminate\Http\Request;
@@ -105,6 +106,13 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::get('/category/show/{id}', 'show');
         Route::post('/category/update/{id}', 'update');
         Route::post('/category/store', 'store');
+    });
+
+    Route::controller(SupplyController::class)->group(function () {
+        Route::get('/supply', 'index');
+        Route::get('/supply/show/{id}', 'show');
+        Route::post('/supply/update/{id}', 'update');
+        Route::post('/supply/store', 'store');
     });
 });
 

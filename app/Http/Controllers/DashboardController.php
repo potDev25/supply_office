@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
+use App\Models\Document;
 use App\Models\PurchaseDocument;
+use App\Models\Supply;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -18,8 +20,8 @@ class DashboardController extends Controller
 
     $numbers = [
         'departments' => Department::count(),
-        'po' => PurchaseDocument::where('po_status', 'done')->count(),
-        'pr' => PurchaseDocument::where('pr_status', 'done')->count(),
+        'po' => Document::where('status', 'consolidated')->count(),
+        'pr' => Supply::count(),
         'users' => User::where('role', '!=', 'general admin')->count(),
     ];
 

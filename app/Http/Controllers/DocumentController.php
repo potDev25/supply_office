@@ -113,6 +113,11 @@ class DocumentController extends Controller
         return response(compact('data', 'numbers'));
     }
 
+    public function setFileName($file){
+        return $file->getClientOriginalName();
+    }
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -122,6 +127,7 @@ class DocumentController extends Controller
         $data['user_id'] = auth()->user()->id;
         $data['department_id'] = auth()->user()->department_id;
         if($request->hasFile('document')){
+            $data['file_name'] = $this->setFileName($request->file('document'));
             $data['document'] = $request->file('document')->store('media', 'public');
         }
 

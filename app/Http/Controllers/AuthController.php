@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EditUserRequest;
 use App\Http\Requests\LoginRequest;
 use App\Models\Applicant;
+use App\Models\Category;
 use App\Models\Department;
 use App\Models\Media;
 use App\Models\User;
@@ -19,8 +20,9 @@ class AuthController extends Controller
     public function index(Request $request){
         $user = $request->user();
         $departments = Department::orderBy('department_name', 'ASC')->get();
+        $categories = Category::orderBy('name', 'ASC')->get();
         
-        return response(compact('user', 'departments'));
+        return response(compact('user', 'departments', 'categories'));
     }
 
     public function login(LoginRequest $request){
