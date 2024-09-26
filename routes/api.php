@@ -3,6 +3,7 @@
 use App\Http\Controllers\AnnualProcurementPlanController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DailyTimeRecordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\PurchaseDocumentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReturnStatusController;
 use App\Http\Controllers\TestController;
+use App\Http\Requests\CategoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -96,6 +98,13 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::get('/annual/show/{id}', 'show');
         Route::post('/annual/update/{id}', 'update');
         Route::post('/annual/store', 'store');
+    });
+
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('/category', 'index');
+        Route::get('/category/show/{id}', 'show');
+        Route::post('/category/update/{id}', 'update');
+        Route::post('/category/store', 'store');
     });
 });
 
