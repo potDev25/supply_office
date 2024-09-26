@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -62,29 +63,53 @@ class AuthController extends Controller
         return response($data);
     }
 
-    public function editUser(User $user, EditUserRequest $request){
-        $payload = $request->validated();
+    public function editUser(User $user, Request $request){
+        $image = '';
+        $payload = $request->validate([
+            "lastname" => 'required',
+            "firstname" => 'required',
+            "middle_name" => 'nullable',
+            "position" => 'required',
+            "email" => 'required',
+            "contact_number" =>  'required',
+            "username" =>  'required',
+            "department_id" => 'nullable'
+        ]);
         if($request->hasFile('profile_image')){
-            $payload['profile_image'] = $request->file('profile_image')->store('media', 'public');
+            $request->validate([
+                "profile_image" =>  'nullable|mimes:png,jpg',
+            ]);
+            $image = $request->file('profile_image')->store('media', 'public');
         }
 
-        $user->lastname = $payload['lastname'];
-        $user->firstname = $payload['firstname'];
-        $user->middle_name = $payload['middle_name'];
-        $user->position = $payload['position'];
-        $user->email = $payload['email'];
-        $user->contact_number = $payload['contact_number'];
-        $user->username = $payload['username'];
-        $user->department_id = $payload['department_id'];
+        if($request->filled('password')){
+            $request->validate([
+                "password" => 'required|confirmed'
+            ]);
 
-        DB::transaction(function() use ($user, $payload, $request){
-            $user->save();
+            $payload['password'] = Hash::make($request->password);
+        }
 
-            if(isset($request->profile_image)){
+        // $user->lastname = $payload['lastname'];
+        // $user->firstname = $payload['firstname'];
+        // $user->middle_name = $payload['middle_name'];
+        // $user->position = $payload['position'];
+        // $user->email = $payload['email'];
+        // $user->contact_number = $payload['contact_number'];
+        // $user->username = $payload['username'];
+        // $user->department_id = $payload['department_id'];
+        // $user->profile_image = $payload['profile_image'];
+
+        DB::transaction(function() use ($user, $payload, $request, $image){
+            $user->update($payload);
+
+            if($request->hasFile('profile_image')){
                 $user_id = Applicant::where('user_id', $user->id)->first();
-                Media::where('applicant_id', $user_id->id)->update([
-                    'profile_image' => $payload['profile_image']
-                ]);
+                if($image != ''){
+                    Media::where('applicant_id', $user_id->id)->update([
+                        'profile_image' => $image
+                    ]);
+                }
             }
         });
     }

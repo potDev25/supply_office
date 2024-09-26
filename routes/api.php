@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnualProcurementPlanController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DailyTimeRecordController;
@@ -45,6 +46,8 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::controller(DepartmentController::class)->group(function () {
         Route::get('/departments', 'index');
+        Route::get('/departments/show/{department}', 'show');
+        Route::post('/departments/update/{department}', 'update');
         Route::post('/departments/store', 'store');
         Route::post('/departments/batch-delete', 'batch_delete');
         Route::post('/departments/destroy/{department}', 'destroy');
@@ -86,6 +89,13 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::post('/po-request/update-po-status/{document}', 'updatePoStatus');
         Route::delete('/po-request/destroy/{purchase}', 'destroy');
         Route::post('/po-request/po-destroy/{document}', 'poCancel');
+    });
+
+    Route::controller(AnnualProcurementPlanController::class)->group(function () {
+        Route::get('/annual', 'index');
+        Route::get('/annual/show/{id}', 'show');
+        Route::post('/annual/update/{id}', 'update');
+        Route::post('/annual/store', 'store');
     });
 });
 

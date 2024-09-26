@@ -6,6 +6,7 @@ use App\Http\Requests\DepartmentRequest;
 use App\Http\Resources\DepartmentCollection;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
@@ -49,17 +50,32 @@ class DepartmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Department $department)
     {
-        //
+        return response($department);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Department $department)
     {
-        //
+        $payload = $request->validate([
+            'department_name' => 'required',
+            'department_type' => 'required',
+        ]);
+
+        if($request->hasFile('logo')){
+            $request->validate([
+               'logo' => 'required|mimes:png,jpg'
+            ]);
+
+            $payload['logo'] = $request->file('logo')->store('media', 'public');
+        }
+
+        DB::transaction(function () use ($payload, $department){
+            $department->update($payload);
+        });
     }
 
     /**

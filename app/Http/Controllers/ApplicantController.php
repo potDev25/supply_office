@@ -46,7 +46,9 @@ class ApplicantController extends Controller
                 'username' => $payload['username'],
                 'password' => Hash::make($payload['password']),
                 'department_id' => $payload['department_id'],
-                'role' => $payload['role']
+                'role' => $payload['role'],
+                "position" => $payload['position'],
+                "contact_number" =>  $payload['contact_number'],
             ]);
 
             $payload['user_id'] = $user->id;

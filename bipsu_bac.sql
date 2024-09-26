@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 25, 2024 at 12:49 PM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 8.1.6
+-- Generation Time: Sep 26, 2024 at 02:58 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,22 +24,49 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `annual_procurement_plans`
+--
+
+CREATE TABLE `annual_procurement_plans` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `document_id` varchar(50) DEFAULT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `file_name` varchar(50) DEFAULT NULL,
+  `description` text NOT NULL,
+  `document` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `annual_procurement_plans`
+--
+
+INSERT INTO `annual_procurement_plans` (`id`, `document_id`, `user_id`, `title`, `file_name`, `description`, `document`, `created_at`, `updated_at`) VALUES
+(2, '00002', 1, 'In iste quis veritat', 'c4611_sample_explain.pdf', '<p>dfsadfasdfasdfsadf</p>', 'media/OVsOq7jFgL1lazBRAaGmt6bqUaAZUEs57gg8l4At.pdf', '2024-09-25 13:18:52', '2024-09-25 13:53:31'),
+(3, '00003', 1, 'Consequatur Totam q', 'Sample-pdf.pdf', '<p>sdfsadfsadf</p>', 'media/yh7Tt27yggEEUa399UaKseq6cJSkjsoEF8jtO7dj.pdf', '2024-09-25 13:26:20', '2024-09-25 13:26:20'),
+(4, '00004', 1, 'sadfsadf', 'c4611_sample_explain.pdf', '<p>sadfsadfsdf</p>', 'media/SsHsnZGNtkUN39yzNeFzcYVkEypQA26TF12TaWFV.pdf', '2024-09-25 13:47:20', '2024-09-25 13:47:20');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `applicants`
 --
 
 CREATE TABLE `applicants` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `lastname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `firstname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `middlename` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `province` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `city` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `barangay` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `contact_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `position` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lastname` varchar(255) DEFAULT NULL,
+  `firstname` varchar(255) DEFAULT NULL,
+  `middlename` varchar(255) DEFAULT NULL,
+  `province` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `barangay` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `contact_number` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  `position` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -49,9 +76,9 @@ CREATE TABLE `applicants` (
 --
 
 INSERT INTO `applicants` (`id`, `user_id`, `lastname`, `firstname`, `middlename`, `province`, `city`, `barangay`, `email`, `contact_number`, `username`, `position`, `created_at`, `updated_at`) VALUES
-(21, 22, 'Lyle', 'Quinn', 'Kadeem', NULL, NULL, NULL, 'kinityqyto@mailinator.com', '313', 'gubixolaq', 'Illo distinctio Asp', '2024-09-21 16:41:19', '2024-09-21 16:41:19'),
-(22, 23, 'Demetrius', 'Xenos', 'Patrick', NULL, NULL, NULL, 'pygin@mailinator.com', '643', 'fonolarap', 'Est provident dolo', '2024-09-21 16:42:59', '2024-09-21 16:42:59'),
-(23, 24, 'Grady', 'Clarke', 'Joshua', NULL, NULL, NULL, 'apriljoypg@gmail.com', '09369653256', 'admin@gmail.com', 'Cupiditate veritatis', '2024-09-21 16:44:08', '2024-09-21 16:44:08');
+(25, 26, 'Mcdaniel', 'Gisela', 'ere', NULL, NULL, NULL, 'hulej@mailinator.com', '093645123987', 'myqiqijyfi', 'Backend Developer', '2024-09-25 12:05:08', '2024-09-25 12:05:08'),
+(26, 27, 'Galena', 'Xyla', 'Melinda', NULL, NULL, NULL, 'moqenihi@mailinator.com', '66', 'bubuvajin', 'Aute fugiat adipisi', '2024-09-25 16:08:09', '2024-09-25 16:08:09'),
+(27, 28, 'Kirk', 'Jasper', 'Logan', NULL, NULL, NULL, 'dumurumyju@mailinator.com', '139', 'vycyvof', 'Deserunt non ullamco', '2024-09-25 16:49:51', '2024-09-25 16:49:51');
 
 -- --------------------------------------------------------
 
@@ -61,10 +88,10 @@ INSERT INTO `applicants` (`id`, `user_id`, `lastname`, `firstname`, `middlename`
 
 CREATE TABLE `departments` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `department_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `department_type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `logo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `department_name` varchar(255) NOT NULL,
+  `department_type` varchar(50) NOT NULL,
+  `logo` varchar(255) NOT NULL,
+  `name` varchar(50) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -74,8 +101,9 @@ CREATE TABLE `departments` (
 --
 
 INSERT INTO `departments` (`id`, `department_name`, `department_type`, `logo`, `name`, `created_at`, `updated_at`) VALUES
-(39, 'Gillian Reilly', 'Office', 'media/61CI2379j9u3idnnnYkl27EkgZcBdqwHvx6gochA.png', 'Gillian_Reilly', '2024-09-21 16:40:20', '2024-09-21 16:40:20'),
-(40, 'Merritt Maddox', 'School', 'media/sSrSBVgQXqeOJ2GFMR341ohpsGh6lhNuXUZVXxfj.jpg', 'Merritt_Maddox', '2024-09-21 16:40:47', '2024-09-21 16:40:47');
+(41, 'Account Management', 'Office', 'media/7HJtEQUjErNeu4iVEoGv8w3Jbp2yZlumbdT3ciqD.jpg', 'Account_Management', '2024-09-25 12:02:54', '2024-09-25 12:02:54'),
+(42, 'School of Technology and Computer Studies', 'Office', 'media/iasXhfS27WaNjLF2fQLNgrV3ajtzWmj4aUx0Thzr.jpg', 'School_of_Technology_and_Computer_Studies', '2024-09-25 12:03:27', '2024-09-25 12:03:27'),
+(43, 'School Criminal Justice', 'School', 'media/PdqCR74vOGrRuOFkiu3Vbca70NfjjVCosSIGo1kl.jpg', 'Account_Managements', '2024-09-25 16:32:39', '2024-09-25 16:33:22');
 
 -- --------------------------------------------------------
 
@@ -87,13 +115,13 @@ CREATE TABLE `documents` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `department_id` int(255) DEFAULT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `document` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deadline` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `message` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'for review',
-  `date_complied` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `document` text NOT NULL,
+  `deadline` varchar(255) DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'for review',
+  `date_complied` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -103,10 +131,8 @@ CREATE TABLE `documents` (
 --
 
 INSERT INTO `documents` (`id`, `user_id`, `department_id`, `title`, `description`, `document`, `deadline`, `message`, `status`, `date_complied`, `created_at`, `updated_at`) VALUES
-(8, 24, 39, 'PPMP 2024', '121212', 'media/8hvTsC3kWAHInvyYUQUgCBCfqapPyByx4VIZJh4b.pdf', NULL, NULL, 'consolidated', '2024-09-22 01:07:31', '2024-09-21 16:45:49', '2024-09-21 17:07:31'),
-(9, 24, 39, 'Test', 'sfsdfadsf', 'media/CLLe7hFMD538PP3O2aEMsCzfJo2EWI4vWitvqAIv.pdf', NULL, 'Incomplete of requierments', 'cancel', NULL, '2024-09-24 22:34:40', '2024-09-25 00:24:34'),
-(10, 24, 39, 'Sample PPMP', 'dssdf', 'media/GAHBS9jr7UOYt24ssB1implBEgwPiN9zhnSAycZM.pdf', NULL, 'Exceed of Budget', 'cancel', NULL, '2024-09-25 00:24:53', '2024-09-25 00:29:46'),
-(11, 24, 39, 'Sample PPmp', 'dsdf', 'media/feoGAtnmkqrXWsmZ02Zsz1NxcJo2AwxmbrJ8p57Y.pdf', NULL, 'Incomplete of requierments', 'return', NULL, '2024-09-25 00:30:04', '2024-09-25 00:31:17');
+(12, 26, 41, 'Sample PPMP', '<p>sdfsadfasdfsdf</p>', 'media/8yxqG1jiMFlPQuyYsprVpyBbDy1WFWgSTbVo816W.pdf', NULL, NULL, 'consolidated', '2024-09-26 00:53:48', '2024-09-25 16:43:41', '2024-09-25 16:53:48'),
+(13, 27, 42, 'Sample PPM', '<p>21232323</p>', 'media/93HYk7Vgj1zz3ixJAQkAljLZ8nXA6acS5Di1powM.pdf', NULL, NULL, 'consolidated', '2024-09-26 00:53:13', '2024-09-25 16:52:08', '2024-09-25 16:53:13');
 
 -- --------------------------------------------------------
 
@@ -116,11 +142,11 @@ INSERT INTO `documents` (`id`, `user_id`, `department_id`, `title`, `description
 
 CREATE TABLE `failed_jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -133,9 +159,9 @@ CREATE TABLE `failed_jobs` (
 CREATE TABLE `media` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `applicant_id` bigint(20) UNSIGNED NOT NULL,
-  `profile_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sanitary_permit` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `barangay_clearance` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
+  `sanitary_permit` varchar(255) NOT NULL,
+  `barangay_clearance` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -145,9 +171,9 @@ CREATE TABLE `media` (
 --
 
 INSERT INTO `media` (`id`, `applicant_id`, `profile_image`, `sanitary_permit`, `barangay_clearance`, `created_at`, `updated_at`) VALUES
-(19, 21, 'media/KRjPcpDfXPv6hAzpc0Ypxogn9zd1p0BUoSjL5vP0.png', '', '', '2024-09-21 16:41:19', '2024-09-21 16:41:19'),
-(20, 22, 'media/R0SaazWYjJM3jP4hi4YkyQeWutbG6BuSC6aQzs6Y.png', '', '', '2024-09-21 16:42:59', '2024-09-21 16:42:59'),
-(21, 23, 'media/pdwgNwCfvbBBvEYEanYpZj6Pylki1Uza8YFSHKex.jpg', '', '', '2024-09-21 16:44:08', '2024-09-21 16:44:08');
+(23, 25, 'media/QJCzYYNs25hqV3qaRyq9r5qxHHRjRlVuRtzVcJxL.jpg', '', '', '2024-09-25 12:05:08', '2024-09-25 15:52:07'),
+(24, 26, 'media/vyjC5lFoAAKqELENs4pzXFeFJFoFvGfO1GprKJQx.jpg', '', '', '2024-09-25 16:08:09', '2024-09-25 16:08:09'),
+(25, 27, 'media/8Hj05UmacNqdVuB6AttX4iC2XQr8gasYCumI2Rwk.jpg', '', '', '2024-09-25 16:49:51', '2024-09-25 16:49:51');
 
 -- --------------------------------------------------------
 
@@ -157,7 +183,7 @@ INSERT INTO `media` (`id`, `applicant_id`, `profile_image`, `sanitary_permit`, `
 
 CREATE TABLE `migrations` (
   `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -177,7 +203,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (9, '2024_07_21_145626_create_transaction_logs_table', 3),
 (10, '2024_07_23_144301_create_purchase_documents_table', 4),
 (11, '0000_00_00_000000_create_websockets_statistics_entries_table', 5),
-(12, '2024_09_22_015954_create_return_statuses_table', 6);
+(12, '2024_09_22_015954_create_return_statuses_table', 6),
+(13, '2024_09_25_205600_create_annual_procurement_plans_table', 7);
 
 -- --------------------------------------------------------
 
@@ -186,8 +213,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -199,11 +226,11 @@ CREATE TABLE `password_reset_tokens` (
 
 CREATE TABLE `personal_access_tokens` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_type` varchar(255) NOT NULL,
   `tokenable_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abilities` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `expires_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -225,7 +252,10 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (17, 'App\\Models\\User', 1, 'main', 'bc477123acd7507b4f2a4669f272e6d2eb012f6f1407c5f167e74a4323cb9e80', '[\"*\"]', '2024-07-28 06:05:47', NULL, '2024-07-28 06:01:32', '2024-07-28 06:05:47'),
 (18, 'App\\Models\\User', 1, 'main', 'e8ab5b6c63b29c8decdc75118d1cdcfa16935ba8d8b3165d4f4baf44972a33c0', '[\"*\"]', '2024-09-25 02:48:24', NULL, '2024-09-21 16:37:53', '2024-09-25 02:48:24'),
 (19, 'App\\Models\\User', 22, 'main', 'fbfc22775df78962774319d0166ff081e532dbb6e47fecc33b5537a7b1f53f15', '[\"*\"]', '2024-09-21 17:41:04', NULL, '2024-09-21 16:42:08', '2024-09-21 17:41:04'),
-(20, 'App\\Models\\User', 24, 'main', 'bf683202fd77bb97070fc1b9038134b70f51b48700df8e00865b469948b656ea', '[\"*\"]', '2024-09-25 02:48:26', NULL, '2024-09-21 16:44:54', '2024-09-25 02:48:26');
+(20, 'App\\Models\\User', 24, 'main', 'bf683202fd77bb97070fc1b9038134b70f51b48700df8e00865b469948b656ea', '[\"*\"]', '2024-09-25 02:48:26', NULL, '2024-09-21 16:44:54', '2024-09-25 02:48:26'),
+(21, 'App\\Models\\User', 1, 'main', '524c3b7cf0feb8cb588141e598551e9c45e36d6da62aab210c30516ddd6e011a', '[\"*\"]', '2024-09-25 16:56:53', NULL, '2024-09-25 10:29:26', '2024-09-25 16:56:53'),
+(22, 'App\\Models\\User', 26, 'main', 'f98979fb0e907c8a3ac786870deb35658eeb24ead0f415a8240ad1b19fe7b245', '[\"*\"]', '2024-09-25 16:43:43', NULL, '2024-09-25 12:05:24', '2024-09-25 16:43:43'),
+(23, 'App\\Models\\User', 27, 'main', 'ae556a523a88e7702eb776e37cf9b6c28bdedd4301298994515eb975ad1ec153', '[\"*\"]', '2024-09-25 16:54:28', NULL, '2024-09-25 16:51:52', '2024-09-25 16:54:28');
 
 -- --------------------------------------------------------
 
@@ -236,26 +266,19 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 CREATE TABLE `purchase_documents` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
-  `pr_status` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
-  `po_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT 'for review',
-  `pr_request_date` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `purchase_request` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `purchase_order` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `order_description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `request_description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `return_status` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) DEFAULT 'pending',
+  `pr_status` varchar(20) NOT NULL DEFAULT 'pending',
+  `po_status` varchar(20) DEFAULT 'for review',
+  `pr_request_date` varchar(255) DEFAULT NULL,
+  `purchase_request` varchar(255) DEFAULT NULL,
+  `purchase_order` varchar(255) DEFAULT NULL,
+  `order_description` text DEFAULT NULL,
+  `request_description` text DEFAULT NULL,
+  `return_status` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `po_request_date` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `po_request_date` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `purchase_documents`
---
-
-INSERT INTO `purchase_documents` (`id`, `user_id`, `status`, `pr_status`, `po_status`, `pr_request_date`, `purchase_request`, `purchase_order`, `order_description`, `request_description`, `return_status`, `created_at`, `updated_at`, `po_request_date`) VALUES
-(23, 22, 'pending', 'done', 'done', '2024-09-22 01:11:09', 'media/4O8eRxOHX9D8owbWhojLv194epvdwjat8EAPyDE9.pdf', 'media/3m6Q65TD9azqz8nKwU3EBnr0nwdcB3MkGOnOQpIX.pdf', NULL, 'PR 1010101', NULL, '2024-09-21 17:11:09', '2024-09-21 17:14:11', '2024-09-22 01:12:24');
 
 -- --------------------------------------------------------
 
@@ -265,9 +288,9 @@ INSERT INTO `purchase_documents` (`id`, `user_id`, `status`, `pr_status`, `po_st
 
 CREATE TABLE `return_statuses` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `return_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `return_status` varchar(255) NOT NULL,
+  `status` varchar(255) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -289,9 +312,9 @@ INSERT INTO `return_statuses` (`id`, `return_status`, `status`, `name`, `created
 CREATE TABLE `transaction_logs` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `document_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `deadline` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `date_submitted` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deadline` varchar(255) DEFAULT NULL,
+  `date_submitted` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -301,11 +324,8 @@ CREATE TABLE `transaction_logs` (
 --
 
 INSERT INTO `transaction_logs` (`id`, `document_id`, `deadline`, `date_submitted`, `status`, `created_at`, `updated_at`) VALUES
-(12, 8, NULL, '2024-09-22 00:45:49', 'for consolidation', '2024-09-21 17:05:54', '2024-09-21 17:05:54'),
-(13, 8, NULL, '2024-09-22 00:45:49', 'consolidated', '2024-09-21 17:07:31', '2024-09-21 17:07:31'),
-(14, 9, NULL, '2024-09-25 06:34:40', 'return', '2024-09-24 23:05:35', '2024-09-24 23:05:35'),
-(15, 10, NULL, '2024-09-25 08:24:53', 'return', '2024-09-25 00:26:07', '2024-09-25 00:26:07'),
-(16, 11, NULL, '2024-09-25 08:30:04', 'return', '2024-09-25 00:31:17', '2024-09-25 00:31:17');
+(17, 13, NULL, '2024-09-26 00:52:08', 'consolidated', '2024-09-25 16:53:13', '2024-09-25 16:53:13'),
+(18, 12, NULL, '2024-09-26 00:43:41', 'consolidated', '2024-09-25 16:53:48', '2024-09-25 16:53:48');
 
 -- --------------------------------------------------------
 
@@ -316,17 +336,17 @@ INSERT INTO `transaction_logs` (`id`, `document_id`, `deadline`, `date_submitted
 CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `department_id` int(255) DEFAULT NULL,
-  `lastname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `firstname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `middle_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `position` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `contact_number` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lastname` varchar(255) NOT NULL,
+  `firstname` varchar(255) NOT NULL,
+  `middle_name` varchar(255) DEFAULT NULL,
+  `position` varchar(255) DEFAULT NULL,
+  `role` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `contact_number` varchar(12) DEFAULT NULL,
+  `username` varchar(255) NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -337,9 +357,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `department_id`, `lastname`, `firstname`, `middle_name`, `position`, `role`, `email`, `contact_number`, `username`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, NULL, 'General', 'Admin', NULL, NULL, 'general admin', 'admin@gmail.com', NULL, '', NULL, '$2y$10$jT8C2A3nQBXYN4y6/lBg5.dI39BXRNekX6u5wfwCJi9bGmEdzas1e', NULL, NULL, NULL),
-(22, NULL, 'Lyle', 'Quinn', NULL, NULL, 'supply office', 'kinityqyto@mailinator.com', NULL, 'gubixolaq', NULL, '$2y$12$.755AR2rm2Y6Y9Dkfzk1oe8tlD.GNQyEvTd7L4VnYs2Pqx4XxfAxa', NULL, '2024-09-21 16:41:19', '2024-09-21 16:41:19'),
-(23, 39, 'Demetrius', 'Xenos', NULL, NULL, 'supply office', 'pygin@mailinator.com', NULL, 'fonolarap', NULL, '$2y$12$d.yGV.BnclligG9ziaMCSuj12..dJOCUbP0pDTxOsdOUYDbPtjQ3K', NULL, '2024-09-21 16:42:59', '2024-09-21 16:42:59'),
-(24, 39, 'Grady', 'Clarke', NULL, NULL, 'admin', 'apriljoypg@gmail.com', NULL, 'admin@gmail.com', NULL, '$2y$12$weBOg.cl2fYdATYr8drjeeQ/Ff49DRVktynqPPpFcrHW/UT2VK9Cq', NULL, '2024-09-21 16:44:08', '2024-09-21 16:44:08');
+(26, 41, 'Mcdaniel', 'Gisela', 'sdfsadfsadf', 'Backend Developer', 'admin', 'hulej@mailinator.com', '1232323', 'myqiqijyfi', NULL, '$2y$12$pwLuwiSnmeFXXpW.zSGG5e/DtLPsVT4opD6Rirt5nbKejMICfOjx6', NULL, '2024-09-25 12:05:08', '2024-09-25 16:04:41'),
+(27, 42, 'Galena', 'Xyla', 'mamamam', 'Aute fugiat adipisi', 'admin', 'moqenihi@mailinator.com', '66', 'bubuvajin', NULL, '$2y$12$Bbnac9kN2r1aE1ClwBlK..Xad/ANs8jeVr1ep6vgtJKJnTPgYX4zK', NULL, '2024-09-25 16:08:09', '2024-09-25 16:51:44'),
+(28, NULL, 'Kirk', 'Jasper', NULL, 'Deserunt non ullamco', 'supply office', 'dumurumyju@mailinator.com', '139', 'vycyvof', NULL, '$2y$12$ZGt7J8WczlvWVMi8pOg5lOSgPygn5ZmgPVuAdZ9DgyApEB8Qvyq62', NULL, '2024-09-25 16:49:51', '2024-09-25 16:49:51');
 
 -- --------------------------------------------------------
 
@@ -349,7 +369,7 @@ INSERT INTO `users` (`id`, `department_id`, `lastname`, `firstname`, `middle_nam
 
 CREATE TABLE `websockets_statistics_entries` (
   `id` int(10) UNSIGNED NOT NULL,
-  `app_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `app_id` varchar(255) NOT NULL,
   `peak_connection_count` int(11) NOT NULL,
   `websocket_message_count` int(11) NOT NULL,
   `api_message_count` int(11) NOT NULL,
@@ -360,6 +380,13 @@ CREATE TABLE `websockets_statistics_entries` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `annual_procurement_plans`
+--
+ALTER TABLE `annual_procurement_plans`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `annual_procurement_plans_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `applicants`
@@ -454,22 +481,28 @@ ALTER TABLE `websockets_statistics_entries`
 --
 
 --
+-- AUTO_INCREMENT for table `annual_procurement_plans`
+--
+ALTER TABLE `annual_procurement_plans`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `applicants`
 --
 ALTER TABLE `applicants`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `documents`
 --
 ALTER TABLE `documents`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -481,19 +514,19 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `media`
 --
 ALTER TABLE `media`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `purchase_documents`
@@ -511,13 +544,13 @@ ALTER TABLE `return_statuses`
 -- AUTO_INCREMENT for table `transaction_logs`
 --
 ALTER TABLE `transaction_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `websockets_statistics_entries`
@@ -528,6 +561,12 @@ ALTER TABLE `websockets_statistics_entries`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `annual_procurement_plans`
+--
+ALTER TABLE `annual_procurement_plans`
+  ADD CONSTRAINT `annual_procurement_plans_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `applicants`
