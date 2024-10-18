@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2024 at 03:15 PM
+-- Generation Time: Oct 19, 2024 at 12:27 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -112,6 +112,29 @@ INSERT INTO `categories` (`id`, `name`, `status`, `number`, `created_at`, `updat
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `clien_pars`
+--
+
+CREATE TABLE `clien_pars` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `par_id` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `client_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `clien_pars`
+--
+
+INSERT INTO `clien_pars` (`id`, `par_id`, `user_id`, `client_id`, `created_at`, `updated_at`) VALUES
+(1, '00001', 1, '27', '2024-10-18 12:38:28', '2024-10-18 12:38:28'),
+(2, '00002', 1, '26', '2024-10-18 12:38:39', '2024-10-18 12:38:39');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `departments`
 --
 
@@ -130,9 +153,9 @@ CREATE TABLE `departments` (
 --
 
 INSERT INTO `departments` (`id`, `department_name`, `department_type`, `logo`, `name`, `created_at`, `updated_at`) VALUES
-(41, 'Account Management', 'Office', 'media/nBMPaQyiNQA7NrIXj1dpN9Df0dqQ90yWWmtdgCz3.jpg', 'Account_Management', '2024-09-25 12:02:54', '2024-09-26 11:51:28'),
-(42, 'School of Technology and Computer Studies', 'Office', 'media/j0jZY00MjsBEBXlKhCmPr3QMcwzmsOtALCrQ4LPf.png', 'School_of_Technology_and_Computer_Studies', '2024-09-25 12:03:27', '2024-09-26 11:51:45'),
-(43, 'School Criminal Justice', 'School', 'media/05jpiN082gDx2VB94tuTf5QX38anNLUiz5OM6hZu.png', 'Account_Managements', '2024-09-25 16:32:39', '2024-09-26 11:51:36');
+(41, 'Account Management', 'Office', 'media/YdBJmh9R5m4SS1hOImtvfKhFHnEUGbVMgz17h8zE.jpg', 'Account_Management', '2024-09-25 12:02:54', '2024-10-18 13:50:52'),
+(42, 'School of Technology and Computer Studies', 'Office', 'media/kJUKR93xXGGeI1BY1rt87QqKA9ic2h21s3srUJyk.png', 'School_of_Technology_and_Computer_Studies', '2024-09-25 12:03:27', '2024-10-18 13:51:29'),
+(43, 'School Criminal Justice', 'School', 'media/6tr4OYMBehDXYc5OEs3f1bSbwpaycPS8EcwWwtVW.png', 'Account_Managements', '2024-09-25 16:32:39', '2024-10-18 13:51:15');
 
 -- --------------------------------------------------------
 
@@ -244,7 +267,42 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (18, '2024_10_17_232438_create_receivings_table', 10),
 (19, '2024_10_18_043810_create_received_supplies_table', 10),
 (20, '2024_10_18_065042_create_requisition_slops_table', 10),
-(21, '2024_10_18_071843_create_ris_supplies_table', 10);
+(21, '2024_10_18_071843_create_ris_supplies_table', 10),
+(22, '2024_10_18_201846_create_clien_pars_table', 11),
+(23, '2024_10_18_204428_create_par_supplies_table', 12);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `par_supplies`
+--
+
+CREATE TABLE `par_supplies` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `supply_id` bigint(20) UNSIGNED NOT NULL,
+  `category_id` bigint(20) UNSIGNED NOT NULL,
+  `par_id` int(255) DEFAULT NULL,
+  `price` double(8,2) DEFAULT NULL,
+  `total_price` double(8,2) DEFAULT NULL,
+  `qnty` double(8,2) DEFAULT NULL,
+  `supply_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `client_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `client_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `par_supplies`
+--
+
+INSERT INTO `par_supplies` (`id`, `user_id`, `supply_id`, `category_id`, `par_id`, `price`, `total_price`, `qnty`, `supply_name`, `client_id`, `client_name`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 2, 7, 1, NULL, 0.00, 2.00, 'Laptop', '27', 'Xyla Galena', 'unserviceable', '2024-10-18 13:07:52', '2024-10-18 13:43:44'),
+(2, 1, 4, 2, 1, NULL, 500.00, 1.00, 'A4 Printing Paper', '27', 'Xyla Galena', 'return', '2024-10-18 13:16:30', '2024-10-18 13:44:33'),
+(3, 1, 3, 2, 1, NULL, 800.00, 1.00, 'Ballpoint Pen', '27', 'Xyla Galena', 'issued', '2024-10-18 13:18:10', '2024-10-18 13:18:10'),
+(4, 1, 2, 7, 2, NULL, 0.00, 1.00, 'Laptop', '26', 'Gisela Mcdaniel', 'issued', '2024-10-18 13:46:44', '2024-10-18 13:46:44');
 
 -- --------------------------------------------------------
 
@@ -297,8 +355,8 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (24, 'App\\Models\\User', 1, 'main', '9e39dde6bf63f0b3911f5009a65eee435bce9a22666ee03f9766c5645a866aef', '[\"*\"]', '2024-09-26 04:46:21', NULL, '2024-09-26 03:18:23', '2024-09-26 04:46:21'),
 (26, 'App\\Models\\User', 1, 'main', '0d3f8ec3292a409bfe0a48674d7071cba4336973218cdd500f279495e934be0c', '[\"*\"]', '2024-09-26 16:41:36', NULL, '2024-09-26 11:49:11', '2024-09-26 16:41:36'),
 (28, 'App\\Models\\User', 26, 'main', '0a6879c89c2b9a2fd3d023a76b7d181176bb222c96e6a3c40e543d832dbc6dc4', '[\"*\"]', '2024-09-26 16:41:36', NULL, '2024-09-26 15:35:25', '2024-09-26 16:41:36'),
-(29, 'App\\Models\\User', 1, 'main', '0057e681fc53854d95838c24d2cc083d81ddddddf0a33df57be7b0f90a436db1', '[\"*\"]', '2024-10-18 05:11:21', NULL, '2024-10-18 05:05:06', '2024-10-18 05:11:21'),
-(30, 'App\\Models\\User', 27, 'main', '1f5ea9953f36f3027bf4842382311035d5b4767695b983c50e66f0e18d106e2d', '[\"*\"]', '2024-10-18 05:14:40', NULL, '2024-10-18 05:11:30', '2024-10-18 05:14:40');
+(29, 'App\\Models\\User', 1, 'main', '0057e681fc53854d95838c24d2cc083d81ddddddf0a33df57be7b0f90a436db1', '[\"*\"]', '2024-10-18 14:14:29', NULL, '2024-10-18 05:05:06', '2024-10-18 14:14:29'),
+(30, 'App\\Models\\User', 27, 'main', '1f5ea9953f36f3027bf4842382311035d5b4767695b983c50e66f0e18d106e2d', '[\"*\"]', '2024-10-18 14:26:03', NULL, '2024-10-18 05:11:30', '2024-10-18 14:26:03');
 
 -- --------------------------------------------------------
 
@@ -385,6 +443,8 @@ CREATE TABLE `requisition_slops` (
   `ris_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `submit` int(50) NOT NULL DEFAULT 0,
+  `approved_by` int(255) DEFAULT NULL,
+  `approved_date` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -393,8 +453,13 @@ CREATE TABLE `requisition_slops` (
 -- Dumping data for table `requisition_slops`
 --
 
-INSERT INTO `requisition_slops` (`id`, `user_id`, `ris_number`, `status`, `submit`, `created_at`, `updated_at`) VALUES
-(1, 27, '00001', 'pending', 1, '2024-10-18 05:11:38', '2024-10-18 05:14:31');
+INSERT INTO `requisition_slops` (`id`, `user_id`, `ris_number`, `status`, `submit`, `approved_by`, `approved_date`, `created_at`, `updated_at`) VALUES
+(1, 27, '00001', 'issued', 1, 1, '2024-10-18 19:21:33', '2024-10-18 05:11:38', '2024-10-18 11:21:33'),
+(2, 27, '00002', 'issued', 1, 1, '2024-10-18 19:09:05', '2024-10-18 10:32:32', '2024-10-18 11:09:05'),
+(3, 27, '00003', 'issued', 1, 1, '2024-10-18 19:30:59', '2024-10-18 11:28:32', '2024-10-18 11:30:59'),
+(4, 27, '00004', 'issued', 1, 1, '2024-10-18 21:47:28', '2024-10-18 11:32:54', '2024-10-18 13:47:28'),
+(5, 27, '00005', 'issued', 1, 1, '2024-10-18 20:06:57', '2024-10-18 11:49:49', '2024-10-18 12:06:57'),
+(6, 27, '00006', 'issued', 1, 1, '2024-10-18 20:00:58', '2024-10-18 11:57:01', '2024-10-18 12:00:58');
 
 -- --------------------------------------------------------
 
@@ -432,11 +497,14 @@ CREATE TABLE `ris_supplies` (
   `category_id` bigint(20) UNSIGNED NOT NULL,
   `price` double(8,2) NOT NULL,
   `total_price` double(8,2) NOT NULL,
-  `qnty` double(8,2) NOT NULL,
+  `qnty` int(50) NOT NULL,
   `supply_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `submit` int(50) NOT NULL DEFAULT 0,
   `availbale` int(50) NOT NULL DEFAULT 0,
+  `issued_qnty` int(255) DEFAULT NULL,
+  `issued_total_price` double(10,2) DEFAULT NULL,
   `ris_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -445,8 +513,21 @@ CREATE TABLE `ris_supplies` (
 -- Dumping data for table `ris_supplies`
 --
 
-INSERT INTO `ris_supplies` (`id`, `user_id`, `supply_id`, `category_id`, `price`, `total_price`, `qnty`, `supply_name`, `submit`, `availbale`, `ris_id`, `created_at`, `updated_at`) VALUES
-(1, 27, 3, 2, 800.00, 4000.00, 5.00, 'Ballpoint Pen', 0, 0, '1', '2024-10-18 05:14:24', '2024-10-18 05:14:24');
+INSERT INTO `ris_supplies` (`id`, `user_id`, `supply_id`, `category_id`, `price`, `total_price`, `qnty`, `supply_name`, `submit`, `availbale`, `issued_qnty`, `issued_total_price`, `ris_id`, `status`, `created_at`, `updated_at`) VALUES
+(1, 27, 3, 2, 800.00, 4000.00, 5, 'Ballpoint Pen', 0, 1, 5, 4000.00, '1', 'issued', '2024-10-18 05:14:24', '2024-10-18 10:29:54'),
+(2, 27, 2, 7, 0.00, 0.00, 0, 'Laptop', 0, 2, 0, 0.00, '2', 'not available', '2024-10-18 10:36:31', '2024-10-18 10:40:42'),
+(3, 27, 4, 2, 0.00, 0.00, 0, 'A4 Printing Paper', 0, 2, 0, 0.00, '2', 'not available', '2024-10-18 10:36:42', '2024-10-18 10:40:58'),
+(4, 27, 3, 2, 800.00, 6400.00, 1, 'Ballpoint Pen', 0, 1, 1, 800.00, '2', 'issued', '2024-10-18 10:36:51', '2024-10-18 10:41:06'),
+(5, 27, 2, 7, 0.00, 0.00, 0, 'Laptop', 0, 2, 0, 0.00, '3', 'not available', '2024-10-18 11:28:43', '2024-10-18 11:30:26'),
+(6, 27, 4, 2, 0.00, 0.00, 0, 'A4 Printing Paper', 0, 2, 0, 0.00, '3', 'not available', '2024-10-18 11:28:52', '2024-10-18 11:30:32'),
+(7, 27, 3, 2, 800.00, 8000.00, 10, 'Ballpoint Pen', 0, 1, 10, 8000.00, '3', 'issued', '2024-10-18 11:28:59', '2024-10-18 11:30:47'),
+(8, 27, 2, 7, 0.00, 0.00, 0, 'Laptop', 0, 2, 0, 0.00, '4', 'not available', '2024-10-18 11:33:09', '2024-10-18 11:48:59'),
+(9, 27, 2, 7, 0.00, 0.00, 2, 'Laptop', 0, 2, 0, 0.00, '5', 'not available', '2024-10-18 11:50:01', '2024-10-18 12:02:00'),
+(10, 27, 3, 2, 800.00, 1600.00, 0, 'Ballpoint Pen', 0, 2, 0, 0.00, '5', 'not available', '2024-10-18 11:50:21', '2024-10-18 12:04:20'),
+(11, 27, 1, 5, 0.00, 0.00, 0, 'sdfsdf', 0, 2, 0, 0.00, '5', 'not available', '2024-10-18 11:50:27', '2024-10-18 12:02:10'),
+(12, 27, 5, 2, 0.00, 0.00, 2, 'Post-it Notes', 0, 2, 0, 0.00, '5', 'not available', '2024-10-18 11:50:32', '2024-10-18 12:06:47'),
+(13, 27, 4, 2, 500.00, 1000.00, 0, 'A4 Printing Paper', 0, 2, 0, 0.00, '5', 'not available', '2024-10-18 11:50:39', '2024-10-18 12:06:20'),
+(14, 27, 3, 2, 800.00, 800.00, 1, 'Ballpoint Pen', 0, 1, 1, 800.00, '6', 'issued', '2024-10-18 11:59:50', '2024-10-18 12:00:52');
 
 -- --------------------------------------------------------
 
@@ -511,9 +592,9 @@ CREATE TABLE `supplies` (
 
 INSERT INTO `supplies` (`id`, `user_id`, `supply_name`, `category_id`, `description`, `unit`, `image_url`, `qnty`, `price`, `created_at`, `updated_at`) VALUES
 (1, '', 'sdfsdf', '5', 'sdfsdf', 'pack', 'media/2sH7aKJI9bhpzxIZNwp9744v365WB11zbqmB57lI.jpg', 0, NULL, '2024-09-26 10:13:15', '2024-09-26 10:13:15'),
-(2, '', 'Laptop', '7', 'Lenovo', 'piece', 'media/t3NvAH3GfwkAXq9Fquglk8e8oVZybJhwYPeBTw3f.jpg', 0, NULL, '2024-09-26 10:33:34', '2024-09-26 10:33:34'),
-(3, '', 'Ballpoint Pen', '2', 'Blue ink, medium tip ballpoint pen.', 'box', 'media/lAJ44yZBPBvj3QeuXdm6zaurRMKB8DIxEd8juqyY.png', 6, 800, '2024-09-26 10:34:35', '2024-10-18 05:09:51'),
-(4, '', 'A4 Printing Paper', '2', '500 sheets per ream, 80 GSM, white.', 'box', 'media/3jaXAlUZXmMksA5qjilaIu8Q76xJG3AUs8WWamC6.jpg', 0, NULL, '2024-09-26 10:35:09', '2024-09-26 10:54:42'),
+(2, '', 'Laptop', '7', 'Lenovo', 'piece', 'media/t3NvAH3GfwkAXq9Fquglk8e8oVZybJhwYPeBTw3f.jpg', -3, NULL, '2024-09-26 10:33:34', '2024-10-18 13:46:44'),
+(3, '', 'Ballpoint Pen', '2', 'Blue ink, medium tip ballpoint pen.', 'box', 'media/lAJ44yZBPBvj3QeuXdm6zaurRMKB8DIxEd8juqyY.png', 3, 800, '2024-09-26 10:34:35', '2024-10-18 13:18:10'),
+(4, '', 'A4 Printing Paper', '2', '500 sheets per ream, 80 GSM, white.', 'box', 'media/3jaXAlUZXmMksA5qjilaIu8Q76xJG3AUs8WWamC6.jpg', 9, 500, '2024-09-26 10:35:09', '2024-10-18 13:16:30'),
 (5, '', 'Post-it Notes', '2', '3x3 inch sticky notes, 100 sheets per pad, yellow.', 'piece', 'media/5TzoaODWbfafMSrAiA2AvBSX7UC3kp4S9uRTHZ3f.jpg', 0, NULL, '2024-09-26 10:36:25', '2024-09-26 10:36:25');
 
 -- --------------------------------------------------------
@@ -571,7 +652,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `department_id`, `lastname`, `firstname`, `middle_name`, `position`, `role`, `email`, `contact_number`, `username`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, NULL, 'General', 'Admin', NULL, NULL, 'general admin', 'admin@gmail.com', NULL, '', NULL, '$2y$10$jT8C2A3nQBXYN4y6/lBg5.dI39BXRNekX6u5wfwCJi9bGmEdzas1e', NULL, NULL, NULL),
+(1, NULL, 'General', 'Admin', NULL, 'supply office officer', 'general admin', 'admin@gmail.com', NULL, '', NULL, '$2y$10$jT8C2A3nQBXYN4y6/lBg5.dI39BXRNekX6u5wfwCJi9bGmEdzas1e', NULL, NULL, NULL),
 (26, 41, 'Mcdaniel', 'Gisela', 'sdfsadfsadf', 'Backend Developer', 'admin', 'hulej@mailinator.com', '1232323', 'myqiqijyfi', NULL, '$2y$12$q5RGk7d.BXZ0.7EeZrP2texrqZjKY0XzWkqWB21HoCJwhQkxGEGGS', NULL, '2024-09-25 12:05:08', '2024-09-26 15:35:23'),
 (27, 42, 'Galena', 'Xyla', 'mamamam', 'Aute fugiat adipisi', 'admin', 'moqenihi@mailinator.com', '66', 'bubuvajin', NULL, '$2y$12$Bbnac9kN2r1aE1ClwBlK..Xad/ANs8jeVr1ep6vgtJKJnTPgYX4zK', NULL, '2024-09-25 16:08:09', '2024-09-25 16:51:44'),
 (28, NULL, 'Kirk', 'Jasper', NULL, 'Deserunt non ullamco', 'supply office', 'dumurumyju@mailinator.com', '139', 'vycyvof', NULL, '$2y$12$QYjVyFj9Hg6Xnn7ewHdKze07bjdWQRm7r/lNZ39prvaoInMEGGVGy', NULL, '2024-09-25 16:49:51', '2024-09-26 12:34:23');
@@ -617,6 +698,13 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `clien_pars`
+--
+ALTER TABLE `clien_pars`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `clien_pars_user_id_foreign` (`user_id`);
+
+--
 -- Indexes for table `departments`
 --
 ALTER TABLE `departments`
@@ -648,6 +736,15 @@ ALTER TABLE `media`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `par_supplies`
+--
+ALTER TABLE `par_supplies`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `par_supplies_user_id_foreign` (`user_id`),
+  ADD KEY `par_supplies_supply_id_foreign` (`supply_id`),
+  ADD KEY `par_supplies_category_id_foreign` (`category_id`);
 
 --
 -- Indexes for table `password_reset_tokens`
@@ -772,6 +869,12 @@ ALTER TABLE `categories`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `clien_pars`
+--
+ALTER TABLE `clien_pars`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
@@ -799,7 +902,13 @@ ALTER TABLE `media`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT for table `par_supplies`
+--
+ALTER TABLE `par_supplies`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -829,7 +938,7 @@ ALTER TABLE `receivings`
 -- AUTO_INCREMENT for table `requisition_slops`
 --
 ALTER TABLE `requisition_slops`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `return_statuses`
@@ -841,7 +950,7 @@ ALTER TABLE `return_statuses`
 -- AUTO_INCREMENT for table `ris_supplies`
 --
 ALTER TABLE `ris_supplies`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `signatures`
@@ -896,6 +1005,12 @@ ALTER TABLE `applicants`
   ADD CONSTRAINT `applicants_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `clien_pars`
+--
+ALTER TABLE `clien_pars`
+  ADD CONSTRAINT `clien_pars_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `documents`
 --
 ALTER TABLE `documents`
@@ -906,6 +1021,14 @@ ALTER TABLE `documents`
 --
 ALTER TABLE `media`
   ADD CONSTRAINT `media_applicant_id_foreign` FOREIGN KEY (`applicant_id`) REFERENCES `applicants` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `par_supplies`
+--
+ALTER TABLE `par_supplies`
+  ADD CONSTRAINT `par_supplies_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `par_supplies_supply_id_foreign` FOREIGN KEY (`supply_id`) REFERENCES `supplies` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `par_supplies_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `purchase_documents`

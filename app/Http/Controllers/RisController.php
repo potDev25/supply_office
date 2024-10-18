@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\RequisitionSlop;
+use App\Models\RisSupplies;
+use App\Models\Supply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -19,9 +21,15 @@ class RisController extends Controller
             ->join('users', 'users.id', '=', 'requisition_slops.user_id')
             ->where('status', 'pending')->paginate($request->limit);
         }else{
-            $data = RequisitionSlop::select('requisition_slops.*', 'users.lastname', 'users.firstname')
+            $query = RequisitionSlop::query();
+
+            $query->when($request->filled('status'), function($q) use($request) {
+                $q->where('status', $request->status);
+            });
+
+            $data = $query->select('requisition_slops.*', 'users.lastname', 'users.firstname')
             ->join('users', 'users.id', '=', 'requisition_slops.user_id')
-            ->where('status', 'pending')->where('user_id', auth()->user()->id)->paginate($request->limit);
+            ->where('user_id', auth()->user()->id)->paginate($request->limit);
         }
 
         return response($data);
@@ -56,6 +64,44 @@ class RisController extends Controller
     public function show(string $id)
     {
         //
+    }
+
+    public function supply(RisSupplies $id)
+    {
+        $data = RisSupplies::select('ris_supplies.*', 'users.lastname', 'users.firstname', 'categories.name', 'requisition_slops.ris_number', 'supplies.image_url', 'supplies.description', 'supplies.unit', 'supplies.qnty as available_supply')
+            ->join('users', 'users.id', '=', 'ris_supplies.user_id')
+            ->join('categories', 'categories.id', '=', 'ris_supplies.category_id')
+            ->join('supplies', 'supplies.id', '=', 'ris_supplies.supply_id')
+            ->join('requisition_slops', 'requisition_slops.id', '=', 'ris_supplies.ris_id')
+            ->where('ris_supplies.id', $id->id)
+            ->first();
+        return response($data);
+    }
+
+    public function supplyUpdate(RisSupplies $id, Request $request){
+        $payload = $request->validate([
+            'availbale' => 'required',
+            'qnty' => 'required_if:available,1'
+        ]);
+
+        DB::transaction(function () use($payload, $id) {
+            $price = $payload['availbale'] == 1 ? $payload['qnty'] : 0;
+            $payload['issued_total_price'] = (float)$price * $id->price;
+            $payload['issued_qnty'] = $payload['availbale'] == 1 ? $payload['issued_qnty'] : 0;
+            $payload['status'] = $payload['availbale'] == 1 ? 'issued' : 'not available';
+
+            if($payload['availbale'] == 2){
+                $payload['qnty'] = $id->qnty;
+            }
+
+            $id->update($payload);
+
+            if($payload['availbale'] == 1){
+                $supply = Supply::where('id', $id->supply_id)->first();
+                $supply->qnty = $supply->qnty -  $payload['issued_qnty'];
+                $supply->save();
+            }
+        });
     }
 
     /**

@@ -4,11 +4,13 @@ use App\Http\Controllers\AnnualProcurementPlanController;
 use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ClientParController;
 use App\Http\Controllers\DailyTimeRecordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LogsController;
+use App\Http\Controllers\ParSupplyController;
 use App\Http\Controllers\PurchaseDocumentController;
 use App\Http\Controllers\ReceivingController;
 use App\Http\Controllers\ReportController;
@@ -133,6 +135,13 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::post('/receving/store', 'store');
     });
 
+    Route::controller(ClientParController::class)->group(function () {
+        Route::get('/par', 'index');
+        Route::get('/par/show/{id}', 'show');
+        Route::post('/par/update/{id}', 'update');
+        Route::post('/par/store', 'store');
+    });
+
     Route::controller(StockController::class)->group(function () {
         Route::get('/stocks/{receiving}', 'index');
         Route::get('/stocks/requests/{requesition}', 'requests');
@@ -141,13 +150,26 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::post('/stocks/store/{id}/{receive}', 'store');
         Route::post('/stocks/request/store/{id}/{receive}', 'requestStore');
         Route::post('/stocks/submit-form/{requesition}', 'submitForm');
+        Route::post('/stocks/approve-form/{requesition}', 'approveForm');
     });
 
     Route::controller(RisController::class)->group(function () {
         Route::get('/ris', 'index');
         Route::get('/ris/show/{id}', 'show');
+        Route::get('/ris/show/supply/{id}', 'supply');
+        Route::post('/ris/show/supply/issue/{id}', 'supplyUpdate');
         Route::post('/ris/update/{id}', 'update');
         Route::post('/ris/store', 'store');
+    });
+
+    Route::controller(ParSupplyController::class)->group(function () {
+        Route::get('/par-supplies/{id}', 'index');
+        Route::get('/par-supplies/client/{id}', 'client');
+        Route::get('/par-supplies/show/{id}', 'show');
+        Route::get('/par-supplies/show/supply/{id}', 'supply');
+        Route::post('/par-supplies/show/supply/issue/{id}', 'supplyUpdate');
+        Route::post('/par-supplies/update/{id}', 'update');
+        Route::post('/par-supplies/store/{par}/{id}', 'store');
     });
 });
 

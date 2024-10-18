@@ -10,7 +10,9 @@ use App\Models\Receiving;
 use App\Models\RequisitionSlop;
 use App\Models\RisSupplies;
 use App\Models\Supply;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class StockController extends Controller
@@ -59,7 +61,7 @@ class StockController extends Controller
 
     public function requests(RequisitionSlop $requesition)
     {
-        $data = RisSupplies::select('ris_supplies.*', 'users.lastname', 'users.firstname', 'categories.name', 'requisition_slops.ris_number', 'supplies.image_url', 'supplies.description', 'supplies.unit')
+        $data = RisSupplies::select('ris_supplies.*', 'users.lastname', 'users.firstname', 'categories.name', 'requisition_slops.ris_number', 'supplies.image_url', 'supplies.description', 'supplies.unit', 'supplies.qnty as available_supply')
             ->join('users', 'users.id', '=', 'ris_supplies.user_id')
             ->join('categories', 'categories.id', '=', 'ris_supplies.category_id')
             ->join('supplies', 'supplies.id', '=', 'ris_supplies.supply_id')
@@ -67,13 +69,27 @@ class StockController extends Controller
             ->where('ris_supplies.ris_id', $requesition->id)
             ->get();
         $ids = [];
+        $total_price = 0;
         foreach ($data as $key => $value) {
             $ids[] = $value->supply_id;
+            $total_price += (float)$value->issued_total_price ?? 0;
         }
 
-        $supplies = Supply::whereNotIn('id', $ids)->get();
+        $supplies = Supply::whereNotIn('id', $ids)
+        ->where('qnty', '!=', 0)
+        ->get();
+        $ris = RequisitionSlop::select('users.lastname', 'users.firstname', 'requisition_slops.*', 'users.position')
+        ->join('users', 'users.id', '=', 'requisition_slops.user_id')
+        ->where('requisition_slops.id', $requesition->id)
+        ->first();
 
-        return response(compact('data', 'supplies', 'requesition', 'requesition'));
+        $approve = [];
+
+        if($ris->approved_by){
+            $approve = User::where('id', $ris->approved_by)->first();
+        }
+
+        return response(compact('data', 'supplies', 'requesition', 'requesition', 'ris', 'approve', 'total_price'));
     }
 
     public function requestStore(Supply $id, RisSuppliesRequest $request, RequisitionSlop $receive)
@@ -90,7 +106,7 @@ class StockController extends Controller
                 'supply_name' => $id->supply_name,
                 'total_price' => $total_price,
                 'qnty' => (int)$payload['qnty'],
-                'price' => $id->price,
+                'price' => $price,
                 'ris_id' => $receive->id
             ]);
         });
@@ -98,6 +114,13 @@ class StockController extends Controller
 
     public function submitForm(RequisitionSlop $requesition) {
         $requesition->submit = 1;
+        $requesition->save();
+    }
+
+    public function approveForm(RequisitionSlop $requesition) {
+        $requesition->status = 'issued';
+        $requesition->approved_by = auth()->user()->id;
+        $requesition->approved_date = Date::now();
         $requesition->save();
     }
 }
