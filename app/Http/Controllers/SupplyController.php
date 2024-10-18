@@ -42,7 +42,11 @@ class SupplyController extends Controller
      */
     public function show(Supply $id)
     {
-        return response($id);
+        $data = Supply::select('supplies.*', 'categories.name')
+        ->join('categories', 'categories.id', '=', 'supplies.category_id')
+        ->where('supplies.id', $id->id)
+        ->first();
+        return response($data);
     }
 
     /**

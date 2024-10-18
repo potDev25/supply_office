@@ -8,6 +8,8 @@ use App\Models\Applicant;
 use App\Models\Category;
 use App\Models\Department;
 use App\Models\Media;
+use App\Models\Supplier;
+use App\Models\Supply;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,8 +23,10 @@ class AuthController extends Controller
         $user = $request->user();
         $departments = Department::orderBy('department_name', 'ASC')->get();
         $categories = Category::orderBy('name', 'ASC')->get();
+        $supplier = Supplier::where('status', 'Active')->orderBy('supplier_name', 'ASC')->get();
+        $supplies = Supply::orderBy('supply_name', 'ASC')->get();
         
-        return response(compact('user', 'departments', 'categories'));
+        return response(compact('user', 'departments', 'categories', 'supplier', 'supplies'));
     }
 
     public function login(LoginRequest $request){

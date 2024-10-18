@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SignatureController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::controller(SignatureController::class)->group(function(){
+    Route::post('/signature/store', 'store');
 });
 
 Route::get('/linkstorage', function () {

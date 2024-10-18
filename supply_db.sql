@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2024 at 12:33 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Oct 18, 2024 at 03:15 PM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 8.1.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,12 +29,12 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `annual_procurement_plans` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `document_id` varchar(50) DEFAULT NULL,
+  `document_id` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `file_name` varchar(50) DEFAULT NULL,
-  `description` text NOT NULL,
-  `document` text NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `file_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `document` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -57,16 +57,16 @@ INSERT INTO `annual_procurement_plans` (`id`, `document_id`, `user_id`, `title`,
 CREATE TABLE `applicants` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `lastname` varchar(255) DEFAULT NULL,
-  `firstname` varchar(255) DEFAULT NULL,
-  `middlename` varchar(255) DEFAULT NULL,
-  `province` varchar(255) DEFAULT NULL,
-  `city` varchar(255) DEFAULT NULL,
-  `barangay` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `contact_number` varchar(255) DEFAULT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  `position` varchar(255) DEFAULT NULL,
+  `lastname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `firstname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `middlename` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `province` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `barangay` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `contact_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `position` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -88,9 +88,9 @@ INSERT INTO `applicants` (`id`, `user_id`, `lastname`, `firstname`, `middlename`
 
 CREATE TABLE `categories` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL,
-  `number` varchar(255) NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -117,10 +117,10 @@ INSERT INTO `categories` (`id`, `name`, `status`, `number`, `created_at`, `updat
 
 CREATE TABLE `departments` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `department_name` varchar(255) NOT NULL,
-  `department_type` varchar(50) NOT NULL,
-  `logo` varchar(255) NOT NULL,
-  `name` varchar(50) NOT NULL,
+  `department_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `department_type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `logo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -144,14 +144,14 @@ CREATE TABLE `documents` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
   `department_id` int(255) DEFAULT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text NOT NULL,
-  `document` text NOT NULL,
-  `deadline` varchar(255) DEFAULT NULL,
-  `message` text DEFAULT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'for review',
-  `file_name` varchar(50) DEFAULT NULL,
-  `date_complied` varchar(255) DEFAULT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `document` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `deadline` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `message` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'for review',
+  `file_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `date_complied` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -174,11 +174,11 @@ INSERT INTO `documents` (`id`, `user_id`, `department_id`, `title`, `description
 
 CREATE TABLE `failed_jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -191,9 +191,9 @@ CREATE TABLE `failed_jobs` (
 CREATE TABLE `media` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `applicant_id` bigint(20) UNSIGNED NOT NULL,
-  `profile_image` varchar(255) DEFAULT NULL,
-  `sanitary_permit` varchar(255) NOT NULL,
-  `barangay_clearance` varchar(255) NOT NULL,
+  `profile_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sanitary_permit` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `barangay_clearance` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -215,7 +215,7 @@ INSERT INTO `media` (`id`, `applicant_id`, `profile_image`, `sanitary_permit`, `
 
 CREATE TABLE `migrations` (
   `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -238,7 +238,13 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (12, '2024_09_22_015954_create_return_statuses_table', 6),
 (13, '2024_09_25_205600_create_annual_procurement_plans_table', 7),
 (14, '2024_09_26_031251_create_categories_table', 8),
-(15, '2024_09_26_173329_create_supplies_table', 9);
+(15, '2024_09_26_173329_create_supplies_table', 9),
+(16, '2024_10_17_175524_create_signatures_table', 10),
+(17, '2024_10_17_215909_create_suppliers_table', 10),
+(18, '2024_10_17_232438_create_receivings_table', 10),
+(19, '2024_10_18_043810_create_received_supplies_table', 10),
+(20, '2024_10_18_065042_create_requisition_slops_table', 10),
+(21, '2024_10_18_071843_create_ris_supplies_table', 10);
 
 -- --------------------------------------------------------
 
@@ -247,8 +253,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -260,11 +266,11 @@ CREATE TABLE `password_reset_tokens` (
 
 CREATE TABLE `personal_access_tokens` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tokenable_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `token` varchar(64) NOT NULL,
-  `abilities` text DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `last_used_at` timestamp NULL DEFAULT NULL,
   `expires_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -290,7 +296,9 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (23, 'App\\Models\\User', 27, 'main', 'ae556a523a88e7702eb776e37cf9b6c28bdedd4301298994515eb975ad1ec153', '[\"*\"]', '2024-09-25 16:54:28', NULL, '2024-09-25 16:51:52', '2024-09-25 16:54:28'),
 (24, 'App\\Models\\User', 1, 'main', '9e39dde6bf63f0b3911f5009a65eee435bce9a22666ee03f9766c5645a866aef', '[\"*\"]', '2024-09-26 04:46:21', NULL, '2024-09-26 03:18:23', '2024-09-26 04:46:21'),
 (26, 'App\\Models\\User', 1, 'main', '0d3f8ec3292a409bfe0a48674d7071cba4336973218cdd500f279495e934be0c', '[\"*\"]', '2024-09-26 16:41:36', NULL, '2024-09-26 11:49:11', '2024-09-26 16:41:36'),
-(28, 'App\\Models\\User', 26, 'main', '0a6879c89c2b9a2fd3d023a76b7d181176bb222c96e6a3c40e543d832dbc6dc4', '[\"*\"]', '2024-09-26 16:41:36', NULL, '2024-09-26 15:35:25', '2024-09-26 16:41:36');
+(28, 'App\\Models\\User', 26, 'main', '0a6879c89c2b9a2fd3d023a76b7d181176bb222c96e6a3c40e543d832dbc6dc4', '[\"*\"]', '2024-09-26 16:41:36', NULL, '2024-09-26 15:35:25', '2024-09-26 16:41:36'),
+(29, 'App\\Models\\User', 1, 'main', '0057e681fc53854d95838c24d2cc083d81ddddddf0a33df57be7b0f90a436db1', '[\"*\"]', '2024-10-18 05:11:21', NULL, '2024-10-18 05:05:06', '2024-10-18 05:11:21'),
+(30, 'App\\Models\\User', 27, 'main', '1f5ea9953f36f3027bf4842382311035d5b4767695b983c50e66f0e18d106e2d', '[\"*\"]', '2024-10-18 05:14:40', NULL, '2024-10-18 05:11:30', '2024-10-18 05:14:40');
 
 -- --------------------------------------------------------
 
@@ -301,19 +309,92 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 CREATE TABLE `purchase_documents` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `status` varchar(255) DEFAULT 'pending',
-  `pr_status` varchar(20) NOT NULL DEFAULT 'pending',
-  `po_status` varchar(20) DEFAULT 'for review',
-  `pr_request_date` varchar(255) DEFAULT NULL,
-  `purchase_request` varchar(255) DEFAULT NULL,
-  `purchase_order` varchar(255) DEFAULT NULL,
-  `order_description` text DEFAULT NULL,
-  `request_description` text DEFAULT NULL,
-  `return_status` text DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
+  `pr_status` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `po_status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT 'for review',
+  `pr_request_date` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `purchase_request` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `purchase_order` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `order_description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `request_description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `return_status` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `po_request_date` varchar(255) DEFAULT NULL
+  `po_request_date` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `received_supplies`
+--
+
+CREATE TABLE `received_supplies` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `supply_id` bigint(20) UNSIGNED NOT NULL,
+  `category_id` bigint(20) UNSIGNED NOT NULL,
+  `price` double(8,2) NOT NULL,
+  `total_price` double(8,2) NOT NULL,
+  `qnty` double(8,2) NOT NULL,
+  `supply_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `receive_id` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `received_supplies`
+--
+
+INSERT INTO `received_supplies` (`id`, `user_id`, `supply_id`, `category_id`, `price`, `total_price`, `qnty`, `supply_name`, `receive_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 3, 2, 800.00, 4800.00, 6.00, 'Ballpoint Pen', '1', '2024-10-18 05:09:51', '2024-10-18 05:09:51');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `receivings`
+--
+
+CREATE TABLE `receivings` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `doc_id` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `date_arrived` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `supplier` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `receivings`
+--
+
+INSERT INTO `receivings` (`id`, `user_id`, `doc_id`, `date_arrived`, `supplier`, `created_at`, `updated_at`) VALUES
+(1, 1, '00001', '2024-10-19', 'Raphael Craft', '2024-10-18 05:07:19', '2024-10-18 05:07:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `requisition_slops`
+--
+
+CREATE TABLE `requisition_slops` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `ris_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `submit` int(50) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `requisition_slops`
+--
+
+INSERT INTO `requisition_slops` (`id`, `user_id`, `ris_number`, `status`, `submit`, `created_at`, `updated_at`) VALUES
+(1, 27, '00001', 'pending', 1, '2024-10-18 05:11:38', '2024-10-18 05:14:31');
 
 -- --------------------------------------------------------
 
@@ -323,9 +404,9 @@ CREATE TABLE `purchase_documents` (
 
 CREATE TABLE `return_statuses` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `return_status` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `return_status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -341,18 +422,85 @@ INSERT INTO `return_statuses` (`id`, `return_status`, `status`, `name`, `created
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `ris_supplies`
+--
+
+CREATE TABLE `ris_supplies` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `supply_id` bigint(20) UNSIGNED NOT NULL,
+  `category_id` bigint(20) UNSIGNED NOT NULL,
+  `price` double(8,2) NOT NULL,
+  `total_price` double(8,2) NOT NULL,
+  `qnty` double(8,2) NOT NULL,
+  `supply_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `submit` int(50) NOT NULL DEFAULT 0,
+  `availbale` int(50) NOT NULL DEFAULT 0,
+  `ris_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `ris_supplies`
+--
+
+INSERT INTO `ris_supplies` (`id`, `user_id`, `supply_id`, `category_id`, `price`, `total_price`, `qnty`, `supply_name`, `submit`, `availbale`, `ris_id`, `created_at`, `updated_at`) VALUES
+(1, 27, 3, 2, 800.00, 4000.00, 5.00, 'Ballpoint Pen', 0, 0, '1', '2024-10-18 05:14:24', '2024-10-18 05:14:24');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `signatures`
+--
+
+CREATE TABLE `signatures` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `suppliers`
+--
+
+CREATE TABLE `suppliers` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `supplier_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `suppliers`
+--
+
+INSERT INTO `suppliers` (`id`, `user_id`, `supplier_name`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Raphael Craft', 'Active', '2024-10-18 05:05:34', '2024-10-18 05:05:34');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `supplies`
 --
 
 CREATE TABLE `supplies` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` varchar(255) NOT NULL,
-  `supply_name` varchar(255) NOT NULL,
-  `category_id` varchar(255) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `unit` varchar(255) NOT NULL,
-  `image_url` varchar(255) NOT NULL,
+  `user_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `supply_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `category_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `unit` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image_url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `qnty` int(11) NOT NULL DEFAULT 0,
+  `price` double DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -361,12 +509,12 @@ CREATE TABLE `supplies` (
 -- Dumping data for table `supplies`
 --
 
-INSERT INTO `supplies` (`id`, `user_id`, `supply_name`, `category_id`, `description`, `unit`, `image_url`, `qnty`, `created_at`, `updated_at`) VALUES
-(1, '', 'sdfsdf', '5', 'sdfsdf', 'pack', 'media/2sH7aKJI9bhpzxIZNwp9744v365WB11zbqmB57lI.jpg', 0, '2024-09-26 10:13:15', '2024-09-26 10:13:15'),
-(2, '', 'Laptop', '7', 'Lenovo', 'piece', 'media/t3NvAH3GfwkAXq9Fquglk8e8oVZybJhwYPeBTw3f.jpg', 0, '2024-09-26 10:33:34', '2024-09-26 10:33:34'),
-(3, '', 'Ballpoint Pen', '2', 'Blue ink, medium tip ballpoint pen.', 'box', 'media/lAJ44yZBPBvj3QeuXdm6zaurRMKB8DIxEd8juqyY.png', 0, '2024-09-26 10:34:35', '2024-09-26 10:34:35'),
-(4, '', 'A4 Printing Paper', '2', '500 sheets per ream, 80 GSM, white.', 'box', 'media/3jaXAlUZXmMksA5qjilaIu8Q76xJG3AUs8WWamC6.jpg', 0, '2024-09-26 10:35:09', '2024-09-26 10:54:42'),
-(5, '', 'Post-it Notes', '2', '3x3 inch sticky notes, 100 sheets per pad, yellow.', 'piece', 'media/5TzoaODWbfafMSrAiA2AvBSX7UC3kp4S9uRTHZ3f.jpg', 0, '2024-09-26 10:36:25', '2024-09-26 10:36:25');
+INSERT INTO `supplies` (`id`, `user_id`, `supply_name`, `category_id`, `description`, `unit`, `image_url`, `qnty`, `price`, `created_at`, `updated_at`) VALUES
+(1, '', 'sdfsdf', '5', 'sdfsdf', 'pack', 'media/2sH7aKJI9bhpzxIZNwp9744v365WB11zbqmB57lI.jpg', 0, NULL, '2024-09-26 10:13:15', '2024-09-26 10:13:15'),
+(2, '', 'Laptop', '7', 'Lenovo', 'piece', 'media/t3NvAH3GfwkAXq9Fquglk8e8oVZybJhwYPeBTw3f.jpg', 0, NULL, '2024-09-26 10:33:34', '2024-09-26 10:33:34'),
+(3, '', 'Ballpoint Pen', '2', 'Blue ink, medium tip ballpoint pen.', 'box', 'media/lAJ44yZBPBvj3QeuXdm6zaurRMKB8DIxEd8juqyY.png', 6, 800, '2024-09-26 10:34:35', '2024-10-18 05:09:51'),
+(4, '', 'A4 Printing Paper', '2', '500 sheets per ream, 80 GSM, white.', 'box', 'media/3jaXAlUZXmMksA5qjilaIu8Q76xJG3AUs8WWamC6.jpg', 0, NULL, '2024-09-26 10:35:09', '2024-09-26 10:54:42'),
+(5, '', 'Post-it Notes', '2', '3x3 inch sticky notes, 100 sheets per pad, yellow.', 'piece', 'media/5TzoaODWbfafMSrAiA2AvBSX7UC3kp4S9uRTHZ3f.jpg', 0, NULL, '2024-09-26 10:36:25', '2024-09-26 10:36:25');
 
 -- --------------------------------------------------------
 
@@ -377,9 +525,9 @@ INSERT INTO `supplies` (`id`, `user_id`, `supply_name`, `category_id`, `descript
 CREATE TABLE `transaction_logs` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `document_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `deadline` varchar(255) DEFAULT NULL,
-  `date_submitted` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `deadline` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `date_submitted` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -403,17 +551,17 @@ INSERT INTO `transaction_logs` (`id`, `document_id`, `deadline`, `date_submitted
 CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `department_id` int(255) DEFAULT NULL,
-  `lastname` varchar(255) NOT NULL,
-  `firstname` varchar(255) NOT NULL,
-  `middle_name` varchar(255) DEFAULT NULL,
-  `position` varchar(255) DEFAULT NULL,
-  `role` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `contact_number` varchar(12) DEFAULT NULL,
-  `username` varchar(255) NOT NULL,
+  `lastname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `firstname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `middle_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `position` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `contact_number` varchar(12) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -436,7 +584,7 @@ INSERT INTO `users` (`id`, `department_id`, `lastname`, `firstname`, `middle_nam
 
 CREATE TABLE `websockets_statistics_entries` (
   `id` int(10) UNSIGNED NOT NULL,
-  `app_id` varchar(255) NOT NULL,
+  `app_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `peak_connection_count` int(11) NOT NULL,
   `websocket_message_count` int(11) NOT NULL,
   `api_message_count` int(11) NOT NULL,
@@ -523,10 +671,56 @@ ALTER TABLE `purchase_documents`
   ADD KEY `purchase_documents_user_id_foreign` (`user_id`);
 
 --
+-- Indexes for table `received_supplies`
+--
+ALTER TABLE `received_supplies`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `received_supplies_user_id_foreign` (`user_id`),
+  ADD KEY `received_supplies_supply_id_foreign` (`supply_id`),
+  ADD KEY `received_supplies_category_id_foreign` (`category_id`);
+
+--
+-- Indexes for table `receivings`
+--
+ALTER TABLE `receivings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `receivings_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `requisition_slops`
+--
+ALTER TABLE `requisition_slops`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `requisition_slops_user_id_foreign` (`user_id`);
+
+--
 -- Indexes for table `return_statuses`
 --
 ALTER TABLE `return_statuses`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `ris_supplies`
+--
+ALTER TABLE `ris_supplies`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ris_supplies_user_id_foreign` (`user_id`),
+  ADD KEY `ris_supplies_supply_id_foreign` (`supply_id`),
+  ADD KEY `ris_supplies_category_id_foreign` (`category_id`);
+
+--
+-- Indexes for table `signatures`
+--
+ALTER TABLE `signatures`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `signatures_user_id_foreign` (`user_id`);
+
+--
+-- Indexes for table `suppliers`
+--
+ALTER TABLE `suppliers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `suppliers_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `supplies`
@@ -605,13 +799,13 @@ ALTER TABLE `media`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `purchase_documents`
@@ -620,10 +814,46 @@ ALTER TABLE `purchase_documents`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
+-- AUTO_INCREMENT for table `received_supplies`
+--
+ALTER TABLE `received_supplies`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `receivings`
+--
+ALTER TABLE `receivings`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `requisition_slops`
+--
+ALTER TABLE `requisition_slops`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `return_statuses`
 --
 ALTER TABLE `return_statuses`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `ris_supplies`
+--
+ALTER TABLE `ris_supplies`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `signatures`
+--
+ALTER TABLE `signatures`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `suppliers`
+--
+ALTER TABLE `suppliers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `supplies`
@@ -682,6 +912,46 @@ ALTER TABLE `media`
 --
 ALTER TABLE `purchase_documents`
   ADD CONSTRAINT `purchase_documents_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `received_supplies`
+--
+ALTER TABLE `received_supplies`
+  ADD CONSTRAINT `received_supplies_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `received_supplies_supply_id_foreign` FOREIGN KEY (`supply_id`) REFERENCES `supplies` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `received_supplies_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `receivings`
+--
+ALTER TABLE `receivings`
+  ADD CONSTRAINT `receivings_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `requisition_slops`
+--
+ALTER TABLE `requisition_slops`
+  ADD CONSTRAINT `requisition_slops_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `ris_supplies`
+--
+ALTER TABLE `ris_supplies`
+  ADD CONSTRAINT `ris_supplies_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `ris_supplies_supply_id_foreign` FOREIGN KEY (`supply_id`) REFERENCES `supplies` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `ris_supplies_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `signatures`
+--
+ALTER TABLE `signatures`
+  ADD CONSTRAINT `signatures_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `suppliers`
+--
+ALTER TABLE `suppliers`
+  ADD CONSTRAINT `suppliers_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `transaction_logs`

@@ -10,8 +10,12 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\PurchaseDocumentController;
+use App\Http\Controllers\ReceivingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReturnStatusController;
+use App\Http\Controllers\RisController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplyController;
 use App\Http\Controllers\TestController;
 use App\Http\Requests\CategoryRequest;
@@ -113,6 +117,37 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::get('/supply/show/{id}', 'show');
         Route::post('/supply/update/{id}', 'update');
         Route::post('/supply/store', 'store');
+    });
+
+    Route::controller(SupplierController::class)->group(function () {
+        Route::get('/suppliers', 'index');
+        Route::get('/suppliers/show/{id}', 'show');
+        Route::post('/suppliers/update/{id}', 'update');
+        Route::post('/suppliers/store', 'store');
+    });
+
+    Route::controller(ReceivingController::class)->group(function () {
+        Route::get('/receving', 'index');
+        Route::get('/receving/show/{id}', 'show');
+        Route::post('/receving/update/{id}', 'update');
+        Route::post('/receving/store', 'store');
+    });
+
+    Route::controller(StockController::class)->group(function () {
+        Route::get('/stocks/{receiving}', 'index');
+        Route::get('/stocks/requests/{requesition}', 'requests');
+        Route::get('/stocks/show/{id}', 'show');
+        Route::post('/stocks/update/{id}', 'update');
+        Route::post('/stocks/store/{id}/{receive}', 'store');
+        Route::post('/stocks/request/store/{id}/{receive}', 'requestStore');
+        Route::post('/stocks/submit-form/{requesition}', 'submitForm');
+    });
+
+    Route::controller(RisController::class)->group(function () {
+        Route::get('/ris', 'index');
+        Route::get('/ris/show/{id}', 'show');
+        Route::post('/ris/update/{id}', 'update');
+        Route::post('/ris/store', 'store');
     });
 });
 
