@@ -19,7 +19,9 @@ class RisController extends Controller
         if(auth()->user()->role == 'general admin'){
             $data = RequisitionSlop::select('requisition_slops.*', 'users.lastname', 'users.firstname')
             ->join('users', 'users.id', '=', 'requisition_slops.user_id')
-            ->where('status', 'pending')->paginate($request->limit);
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'DESC')
+            ->paginate($request->limit);
         }else{
             $query = RequisitionSlop::query();
 
@@ -29,7 +31,9 @@ class RisController extends Controller
 
             $data = $query->select('requisition_slops.*', 'users.lastname', 'users.firstname')
             ->join('users', 'users.id', '=', 'requisition_slops.user_id')
-            ->where('user_id', auth()->user()->id)->paginate($request->limit);
+            ->where('user_id', auth()->user()->id)
+            ->orderBy('created_at', 'DESC')
+            ->paginate($request->limit);
         }
 
         return response($data);

@@ -14,6 +14,7 @@ use App\Http\Controllers\ParSupplyController;
 use App\Http\Controllers\PurchaseDocumentController;
 use App\Http\Controllers\ReceivingController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReportV2Controller;
 use App\Http\Controllers\ReturnStatusController;
 use App\Http\Controllers\RisController;
 use App\Http\Controllers\StockController;
@@ -144,6 +145,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::controller(StockController::class)->group(function () {
         Route::get('/stocks/{receiving}', 'index');
+        Route::get('/stocks/report/{department}', 'reports');
         Route::get('/stocks/requests/{requesition}', 'requests');
         Route::get('/stocks/show/{id}', 'show');
         Route::post('/stocks/update/{id}', 'update');
@@ -170,6 +172,10 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::post('/par-supplies/show/supply/issue/{id}', 'supplyUpdate');
         Route::post('/par-supplies/update/{id}', 'update');
         Route::post('/par-supplies/store/{par}/{id}', 'store');
+    });
+
+    Route::controller(ReportV2Controller::class)->group(function () {
+        Route::get('/reports-supply', 'index');
     });
 });
 

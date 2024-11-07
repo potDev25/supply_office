@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RisSuppliesRequest;
 use App\Http\Requests\StockRequest;
+use App\Models\Department;
 use App\Models\ReceivedSupply;
 use App\Models\Receiving;
 use App\Models\RequisitionSlop;
@@ -76,21 +77,58 @@ class StockController extends Controller
         }
 
         $supplies = Supply::whereNotIn('id', $ids)
-        ->where('qnty', '!=', 0)
-        ->get();
+            ->where('qnty', '!=', 0)
+            ->get();
         $ris = RequisitionSlop::select('users.lastname', 'users.firstname', 'requisition_slops.*', 'users.position')
-        ->join('users', 'users.id', '=', 'requisition_slops.user_id')
-        ->where('requisition_slops.id', $requesition->id)
-        ->first();
+            ->join('users', 'users.id', '=', 'requisition_slops.user_id')
+            ->where('requisition_slops.id', $requesition->id)
+            ->first();
 
         $approve = [];
 
-        if($ris->approved_by){
+        if ($ris->approved_by) {
             $approve = User::where('id', $ris->approved_by)->first();
         }
 
         return response(compact('data', 'supplies', 'requesition', 'requesition', 'ris', 'approve', 'total_price'));
     }
+
+    public function reports(Department $department, Request $request)
+    {
+        $month = $request->query('month', now()->month); // Default to current month if not provided
+        $year = $request->query('year', now()->year); // Default to current year if not provided
+
+        $data = RisSupplies::select('ris_supplies.*', 'users.lastname', 'users.firstname', 'categories.name', 'requisition_slops.ris_number', 'supplies.image_url', 'supplies.description', 'supplies.unit', 'supplies.qnty as available_supply')
+            ->join('users', 'users.id', '=', 'ris_supplies.user_id')
+            ->join('categories', 'categories.id', '=', 'ris_supplies.category_id')
+            ->join('supplies', 'supplies.id', '=', 'ris_supplies.supply_id')
+            ->join('requisition_slops', 'requisition_slops.id', '=', 'ris_supplies.ris_id')
+            ->where('ris_supplies.department_id', $department->id)
+            ->where('ris_supplies.status', 'issued')
+            ->whereMonth('ris_supplies.created_at', $month) // Filter by month
+            ->whereYear('ris_supplies.created_at', $year)  // Filter by year
+            ->orderBy('requisition_slops.ris_number')
+            ->get();
+
+        $costs = number_format(
+                    RisSupplies::where('department_id', $department->id)
+                        ->whereMonth('created_at', $month)
+                        ->whereYear('created_at', $year)
+                        ->where('status', 'issued')
+                        ->sum('issued_total_price'),
+                    2, // Number of decimal places
+                    '.', // Decimal point
+                    ',' // Thousands separator
+        );
+        $count_supplies = RisSupplies::where('department_id', $department->id)
+        ->whereMonth('created_at', $month)
+        ->whereYear('created_at', $year)
+        ->where('status', 'issued')
+        ->count();
+
+        return response(compact('data', 'department', 'costs', 'count_supplies'));
+    }
+
 
     public function requestStore(Supply $id, RisSuppliesRequest $request, RequisitionSlop $receive)
     {
@@ -107,17 +145,20 @@ class StockController extends Controller
                 'total_price' => $total_price,
                 'qnty' => (int)$payload['qnty'],
                 'price' => $price,
-                'ris_id' => $receive->id
+                'ris_id' => $receive->id,
+                'department_id' => auth()->user()->department_id,
             ]);
         });
     }
 
-    public function submitForm(RequisitionSlop $requesition) {
+    public function submitForm(RequisitionSlop $requesition)
+    {
         $requesition->submit = 1;
         $requesition->save();
     }
 
-    public function approveForm(RequisitionSlop $requesition) {
+    public function approveForm(RequisitionSlop $requesition)
+    {
         $requesition->status = 'issued';
         $requesition->approved_by = auth()->user()->id;
         $requesition->approved_date = Date::now();
