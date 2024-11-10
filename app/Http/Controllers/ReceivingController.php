@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuditStoreEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReceivingRequest;
 use App\Models\Receiving;
@@ -16,7 +17,11 @@ class ReceivingController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Receiving::orderBy('id', 'DESC')->paginate($request->limit);
+        if(auth()->user()->role === 'general admin'){
+            $data = Receiving::orderBy('id', 'DESC')->paginate($request->limit);
+        }else{
+            $data = Receiving::where('user_id', auth()->user()->id)->orderBy('id', 'DESC')->paginate($request->limit);
+        }
         return response($data);
     }
 
@@ -41,6 +46,12 @@ class ReceivingController extends Controller
 
         DB::transaction(function () use($payload) {
             Receiving::create($payload);
+
+            $data = [
+                'action' => 'Create Receiving ('.$payload['doc_id'].')',
+                'type' => 'RECEIVING'
+            ];
+            event(new AuditStoreEvent($data));
         });
 
         $s = Supplier::orderBy('id', 'DESC')->get();

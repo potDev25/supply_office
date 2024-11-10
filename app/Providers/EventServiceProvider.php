@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\AuditStoreEvent;
 use App\Events\TransactionChanged;
+use App\Listeners\AuditStore;
 use App\Listeners\InsertTransactionLogs;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         TransactionChanged::class => [
             InsertTransactionLogs::class
+        ],
+        AuditStoreEvent::class => [
+            AuditStore::class
         ]
     ];
 

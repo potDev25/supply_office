@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuditStoreEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\clientParRequest;
 use App\Models\ClienPar;
@@ -17,9 +18,18 @@ class ClientParController extends Controller
     public function index(Request $request)
     {
         $users = User::where('role', 'admin')->orderBy('lastname', 'ASC')->get();
-        $pars = ClienPar::select('clien_pars.*', 'users.lastname', 'users.firstname')
-        ->join('users', 'clien_pars.client_id', '=', 'users.id')
-        ->paginate($request->limit);
+
+
+        if (auth()->user()->role === 'general admin') {
+            $pars = ClienPar::select('clien_pars.*', 'users.lastname', 'users.firstname')
+                ->join('users', 'clien_pars.client_id', '=', 'users.id')
+                ->paginate($request->limit);
+        } else {
+            $pars = ClienPar::select('clien_pars.*', 'users.lastname', 'users.firstname')
+                ->join('users', 'clien_pars.client_id', '=', 'users.id')
+                ->where('clien_pars.user_id', auth()->user()->id)
+                ->paginate($request->limit);
+        }
 
         return response(compact('users', 'pars'));
     }
@@ -41,8 +51,14 @@ class ClientParController extends Controller
         $formattedId = sprintf('%05d', $latestId);
         $payload['par_id'] = $formattedId;
 
-        DB::transaction(function () use($payload) {
+        DB::transaction(function () use ($payload) {
             ClienPar::create($payload);
+
+            $data = [
+                'action' => 'Create PAR (' . $payload['par_id'] . ')',
+                'type' => 'PAR'
+            ];
+            event(new AuditStoreEvent($data));
         });
     }
 

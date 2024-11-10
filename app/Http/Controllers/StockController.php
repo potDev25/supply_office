@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AuditStoreEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RisSuppliesRequest;
 use App\Http\Requests\StockRequest;
 use App\Models\Department;
+use App\Models\HeadTeacher;
 use App\Models\ReceivedSupply;
 use App\Models\Receiving;
 use App\Models\RequisitionSlop;
@@ -35,6 +37,46 @@ class StockController extends Controller
         $supplies = Supply::whereNotIn('id', $ids)->get();
 
         return response(compact('data', 'supplies'));
+    }
+
+    public function stockin_reports(Request $request)
+    {
+        $data = ReceivedSupply::select('received_supplies.*', 'users.lastname', 'users.firstname', 'categories.name', 'receivings.doc_id', 'receivings.supplier', 'supplies.image_url', 'supplies.description', 'supplies.unit')
+            ->join('users', 'users.id', '=', 'received_supplies.user_id')
+            ->join('categories', 'categories.id', '=', 'received_supplies.category_id')
+            ->join('supplies', 'supplies.id', '=', 'received_supplies.supply_id')
+            ->join('receivings', 'receivings.id', '=', 'received_supplies.receive_id')
+            ->whereMonth('received_supplies.created_at', $request->month)
+            ->whereYear('received_supplies.created_at', $request->year)
+            ->paginate($request->limit);
+
+        $total_costs = ReceivedSupply::whereMonth('received_supplies.created_at', $request->month)
+            ->whereYear('received_supplies.created_at', $request->year)
+            ->sum('total_price');
+        $formatted_total_costs = number_format($total_costs, 2, '.', ',');
+
+        $distinctCategoryCount = ReceivedSupply::whereMonth('received_supplies.created_at', $request->month)
+            ->whereYear('received_supplies.created_at', $request->year)
+            ->distinct('category_id')
+            ->count('category_id');
+
+        $total_supplies = ReceivedSupply::whereMonth('received_supplies.created_at', $request->month)
+            ->whereYear('received_supplies.created_at', $request->year)->count();
+
+        $total_price_per_category = ReceivedSupply::select(
+            'categories.name as category_name',
+            'received_supplies.category_id',
+            DB::raw('SUM(received_supplies.total_price) as total_price')
+        )
+            ->join('categories', 'categories.id', '=', 'received_supplies.category_id')
+            ->whereMonth('received_supplies.created_at', $request->month)
+            ->whereYear('received_supplies.created_at', $request->year)
+            ->groupBy('received_supplies.category_id', 'categories.name')  // Grouping by category_id and category name
+            ->get();
+
+        $stocks_analysis = ReceivedSupply::GetSuppliesByMonthYear($request->month, $request->year);
+
+        return response(compact('data', 'formatted_total_costs', 'total_supplies', 'distinctCategoryCount', 'total_price_per_category', 'stocks_analysis'));
     }
 
     public function store(Supply $id, StockRequest $request, Receiving $receive)
@@ -86,11 +128,14 @@ class StockController extends Controller
 
         $approve = [];
 
+        $signature = HeadTeacher::where('user_id', $requesition->approved_by)->first();
+        $requistor = HeadTeacher::where('user_id', $requesition->user_id)->first();
+
         if ($ris->approved_by) {
             $approve = User::where('id', $ris->approved_by)->first();
         }
 
-        return response(compact('data', 'supplies', 'requesition', 'requesition', 'ris', 'approve', 'total_price'));
+        return response(compact('data', 'supplies', 'requesition', 'requesition', 'ris', 'approve', 'total_price', 'signature', 'requistor'));
     }
 
     public function reports(Department $department, Request $request)
@@ -111,22 +156,24 @@ class StockController extends Controller
             ->get();
 
         $costs = number_format(
-                    RisSupplies::where('department_id', $department->id)
-                        ->whereMonth('created_at', $month)
-                        ->whereYear('created_at', $year)
-                        ->where('status', 'issued')
-                        ->sum('issued_total_price'),
-                    2, // Number of decimal places
-                    '.', // Decimal point
-                    ',' // Thousands separator
+            RisSupplies::where('department_id', $department->id)
+                ->whereMonth('created_at', $month)
+                ->whereYear('created_at', $year)
+                ->where('status', 'issued')
+                ->sum('issued_total_price'),
+            2, // Number of decimal places
+            '.', // Decimal point
+            ',' // Thousands separator
         );
         $count_supplies = RisSupplies::where('department_id', $department->id)
-        ->whereMonth('created_at', $month)
-        ->whereYear('created_at', $year)
-        ->where('status', 'issued')
-        ->count();
+            ->whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
+            ->where('status', 'issued')
+            ->count();
 
-        return response(compact('data', 'department', 'costs', 'count_supplies'));
+        $stocks_data = ReceivedSupply::GetIssuedSuppliesReport($request->month, $request->year, $department->id);
+
+        return response(compact('data', 'department', 'costs', 'count_supplies', 'stocks_data'));
     }
 
 
@@ -155,13 +202,26 @@ class StockController extends Controller
     {
         $requesition->submit = 1;
         $requesition->save();
+
+        $data = [
+            'action' => 'RIS Submission ('.$requesition->ris_number.')',
+            'type' => 'RIS'
+        ];
+        event(new AuditStoreEvent($data));
     }
 
     public function approveForm(RequisitionSlop $requesition)
     {
         $requesition->status = 'issued';
+        $requesition->submit = 1;
         $requesition->approved_by = auth()->user()->id;
         $requesition->approved_date = Date::now();
         $requesition->save();
+
+        $data = [
+            'action' => 'RIS Approve ('.$requesition->ris_number.')',
+            'type' => 'RIS'
+        ];
+        event(new AuditStoreEvent($data));
     }
 }

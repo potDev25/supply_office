@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnnualProcurementPlanController;
 use App\Http\Controllers\ApplicantController;
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientParController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\DailyTimeRecordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\HeadTeacherController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\ParSupplyController;
 use App\Http\Controllers\PurchaseDocumentController;
@@ -40,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::get('/user', 'index');
         Route::get('/users/user/{user}', 'getUser');
         Route::post('/users/edit/{user}', 'editUser');
+        Route::post('/users/edit/{user}', 'edit');
         Route::post('/user/logout', 'logout');
     });
 
@@ -144,6 +147,7 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     Route::controller(StockController::class)->group(function () {
+        Route::get('/stocks/stockReport', 'stockin_reports');
         Route::get('/stocks/{receiving}', 'index');
         Route::get('/stocks/report/{department}', 'reports');
         Route::get('/stocks/requests/{requesition}', 'requests');
@@ -166,12 +170,24 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::controller(ParSupplyController::class)->group(function () {
         Route::get('/par-supplies/{id}', 'index');
+        Route::get('/par-reports', 'reports');
         Route::get('/par-supplies/client/{id}', 'client');
         Route::get('/par-supplies/show/{id}', 'show');
         Route::get('/par-supplies/show/supply/{id}', 'supply');
         Route::post('/par-supplies/show/supply/issue/{id}', 'supplyUpdate');
         Route::post('/par-supplies/update/{id}', 'update');
         Route::post('/par-supplies/store/{par}/{id}', 'store');
+    });
+
+    Route::controller(HeadTeacherController::class)->group(function(){
+        Route::get('/head-techer', 'index');
+        Route::get('/head-techer/show/{teacher}', 'show');
+        Route::post('/head-techer/store', 'store');
+        Route::post('/head-techer/delete/{teacher}', 'destroy');
+    });
+
+    Route::controller(AuditController::class)->group(function(){
+        Route::get('/audit', 'index');
     });
 
     Route::controller(ReportV2Controller::class)->group(function () {

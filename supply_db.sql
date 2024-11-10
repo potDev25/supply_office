@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 08, 2024 at 12:03 AM
+-- Generation Time: Nov 10, 2024 at 08:45 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,65 @@ SET time_zone = "+00:00";
 --
 -- Database: `supply_db`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetIssuedSuppliesReport` (IN `dept_id` INT, IN `month_val` INT, IN `year_val` INT)   BEGIN
+    SELECT 
+        s.id,
+        s.supply_name,
+        SUM(rs.issued_total_price) AS total_price,
+        SUM(rs.issued_qnty) AS qnty
+    FROM 
+        ris_supplies rs
+    JOIN 
+        supplies s ON rs.supply_id = s.id
+    WHERE 
+        rs.department_id = dept_id
+        AND MONTH(rs.created_at) = month_val
+        AND YEAR(rs.created_at) = year_val
+    GROUP BY 
+        rs.supply_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetSuppliesByMonthYear` (IN `input_year` INT, IN `input_month` INT)   BEGIN
+    SELECT 
+        s.id, 
+        s.supply_name, 
+        SUM(rs.total_price) AS total_price, 
+        SUM(rs.qnty) AS quantity, 
+        DATE_FORMAT(rs.created_at, '%Y-%m') AS month
+    FROM 
+        received_supplies rs
+    JOIN 
+        supplies s ON rs.supply_id = s.id
+    WHERE 
+        YEAR(rs.created_at) = input_year AND 
+        MONTH(rs.created_at) = input_month
+    GROUP BY 
+        rs.supply_id, s.supply_name
+    ORDER BY 
+        month;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetTotalPriceByStatusAndMonthYear` (IN `input_month` INT, IN `input_year` INT)   BEGIN
+    SELECT 
+        rs.status,
+        SUM(rs.total_price) AS total_price
+    FROM 
+        par_supplies rs
+    JOIN 
+        supplies s ON rs.supply_id = s.id
+    WHERE 
+        MONTH(rs.created_at) = input_month
+        AND YEAR(rs.created_at) = input_year
+    GROUP BY 
+        rs.status;
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -78,7 +137,38 @@ CREATE TABLE `applicants` (
 INSERT INTO `applicants` (`id`, `user_id`, `lastname`, `firstname`, `middlename`, `province`, `city`, `barangay`, `email`, `contact_number`, `username`, `position`, `created_at`, `updated_at`) VALUES
 (25, 26, 'Mcdaniel', 'Gisela', 'ere', NULL, NULL, NULL, 'hulej@mailinator.com', '093645123987', 'myqiqijyfi', 'Backend Developer', '2024-09-25 12:05:08', '2024-09-25 12:05:08'),
 (26, 27, 'Galena', 'Xyla', 'Melinda', NULL, NULL, NULL, 'moqenihi@mailinator.com', '66', 'bubuvajin', 'Aute fugiat adipisi', '2024-09-25 16:08:09', '2024-09-25 16:08:09'),
-(27, 28, 'Kirk', 'Jasper', 'Logan', NULL, NULL, NULL, 'dumurumyju@mailinator.com', '139', 'vycyvof', 'Deserunt non ullamco', '2024-09-25 16:49:51', '2024-09-25 16:49:51');
+(27, 28, 'Kirk', 'Jasper', 'Logan', NULL, NULL, NULL, 'dumurumyju@mailinator.com', '139', 'vycyvof', 'Deserunt non ullamco', '2024-09-25 16:49:51', '2024-09-25 16:49:51'),
+(28, 29, 'Xavier', 'Luke', 'Orlando', NULL, NULL, NULL, 'sepyxu@mailinator.com', '20', 'sefosuw', 'Accusamus ut sapient', '2024-11-09 22:17:58', '2024-11-09 22:17:58');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `audit_trails`
+--
+
+CREATE TABLE `audit_trails` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `action` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `audit_trails`
+--
+
+INSERT INTO `audit_trails` (`id`, `user_id`, `type`, `action`, `created_at`, `updated_at`) VALUES
+(1, 1, 'PAR', 'Create PAR (00003)', '2024-11-09 21:37:52', '2024-11-09 21:37:52'),
+(2, 1, 'RECEIVING', 'Create Receiving (00003)', '2024-11-09 21:50:26', '2024-11-09 21:50:26'),
+(3, 27, 'RIS', 'RIS Submission (00008)', '2024-11-09 21:53:43', '2024-11-09 21:53:43'),
+(4, 27, 'RIS', 'RIS Submission (00009)', '2024-11-09 21:58:46', '2024-11-09 21:58:46'),
+(5, 1, 'RIS', 'RIS Approval (00009)', '2024-11-09 21:59:00', '2024-11-09 21:59:00'),
+(6, 1, 'RIS', 'RIS Approval (00010)', '2024-11-09 22:10:04', '2024-11-09 22:10:04'),
+(7, 27, 'RIS', 'RIS Submission (00011)', '2024-11-09 22:14:20', '2024-11-09 22:14:20'),
+(8, 1, 'RIS', 'RIS Approve (00011)', '2024-11-09 22:14:51', '2024-11-09 22:14:51'),
+(9, 29, 'PAR', 'Create PAR (00004)', '2024-11-09 22:48:40', '2024-11-09 22:48:40');
 
 -- --------------------------------------------------------
 
@@ -130,7 +220,9 @@ CREATE TABLE `clien_pars` (
 
 INSERT INTO `clien_pars` (`id`, `par_id`, `user_id`, `client_id`, `created_at`, `updated_at`) VALUES
 (1, '00001', 1, '27', '2024-10-18 12:38:28', '2024-10-18 12:38:28'),
-(2, '00002', 1, '26', '2024-10-18 12:38:39', '2024-10-18 12:38:39');
+(2, '00002', 1, '26', '2024-10-18 12:38:39', '2024-10-18 12:38:39'),
+(3, '00003', 1, '26', '2024-11-09 21:37:52', '2024-11-09 21:37:52'),
+(4, '00004', 29, '27', '2024-11-09 22:48:40', '2024-11-09 22:48:40');
 
 -- --------------------------------------------------------
 
@@ -158,7 +250,8 @@ INSERT INTO `departments` (`id`, `department_name`, `department_type`, `logo`, `
 (43, 'School Criminal Justice', 'School', 'media/bYpblmUBQIi9zExk9U5Q9eKzVjz5Tzd3VD4kfLIN.jpg', 'Account_Managements', '2024-09-25 16:32:39', '2024-11-06 11:12:44'),
 (44, 'Supply Office', 'Office', 'media/CDMbc2eRlu8jIJ1hRoobPKfCBjkXIQDfGzWkPpQg.png', 'Supply_Office', '2024-11-07 13:41:42', '2024-11-07 13:41:42'),
 (45, 'School of Arts and Sciences', 'School', 'media/ERtKloe2pebuOLIDTllr7pPQWkzrjwkpqR5M4ZsB.jpg', 'School_of_Arts_and_Sciences', '2024-11-07 13:42:03', '2024-11-07 13:42:03'),
-(46, 'IGP', 'Office', 'media/ttpegtZpLfQuSPwIHwKA6zNZjoX5YNdF86GWke0Z.png', 'IGP', '2024-11-07 13:42:29', '2024-11-07 13:42:29');
+(46, 'IGP', 'Office', 'media/ttpegtZpLfQuSPwIHwKA6zNZjoX5YNdF86GWke0Z.png', 'IGP', '2024-11-07 13:42:29', '2024-11-07 13:42:29'),
+(47, 'Sample', 'Office', 'media/2Vxo2kwZhZ9Qqcp0YtocZRjqyAP0Uxxe1yfWzZLX.jpg', 'Sample', '2024-11-09 22:17:34', '2024-11-09 22:17:34');
 
 -- --------------------------------------------------------
 
@@ -211,6 +304,29 @@ CREATE TABLE `failed_jobs` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `head_teachers`
+--
+
+CREATE TABLE `head_teachers` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `image` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `head_teachers`
+--
+
+INSERT INTO `head_teachers` (`id`, `user_id`, `image`, `created_at`, `updated_at`) VALUES
+(1, 1, 'media/qxli5xJyBq2XUyDoxHNIthZOV1nqrxsI4bgFC4RT.jpg', '2024-11-09 19:11:59', '2024-11-09 19:25:05'),
+(2, 27, 'media/Q3UiSW9NxxwHqAp1OwlWLk8X8DL9X6VQxXJeRq0M.webp', '2024-11-09 19:30:09', '2024-11-09 19:30:09'),
+(3, 29, 'media/R3kRJQfnZa5HxziJBLMnwal8WmIht5hZ1570EDbb.jpg', '2024-11-09 22:41:38', '2024-11-09 22:41:38');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `media`
 --
 
@@ -231,7 +347,8 @@ CREATE TABLE `media` (
 INSERT INTO `media` (`id`, `applicant_id`, `profile_image`, `sanitary_permit`, `barangay_clearance`, `created_at`, `updated_at`) VALUES
 (23, 25, 'media/T0F6e1HbjQTDME8YtWLnttYgN6MFhMdEWqKmzRFF.jpg', '', '', '2024-09-25 12:05:08', '2024-09-26 15:35:02'),
 (24, 26, 'media/vyjC5lFoAAKqELENs4pzXFeFJFoFvGfO1GprKJQx.jpg', '', '', '2024-09-25 16:08:09', '2024-09-25 16:08:09'),
-(25, 27, 'media/8Hj05UmacNqdVuB6AttX4iC2XQr8gasYCumI2Rwk.jpg', '', '', '2024-09-25 16:49:51', '2024-09-25 16:49:51');
+(25, 27, 'media/8Hj05UmacNqdVuB6AttX4iC2XQr8gasYCumI2Rwk.jpg', '', '', '2024-09-25 16:49:51', '2024-09-25 16:49:51'),
+(26, 28, 'media/kOqaMFluPktaC3pHeL5CE6E8QMd1Oa9IxcPpss1O.jpg', '', '', '2024-11-09 22:17:58', '2024-11-09 22:17:58');
 
 -- --------------------------------------------------------
 
@@ -272,7 +389,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (20, '2024_10_18_065042_create_requisition_slops_table', 10),
 (21, '2024_10_18_071843_create_ris_supplies_table', 10),
 (22, '2024_10_18_201846_create_clien_pars_table', 11),
-(23, '2024_10_18_204428_create_par_supplies_table', 12);
+(23, '2024_10_18_204428_create_par_supplies_table', 12),
+(24, '2024_11_10_025916_create_head_teachers_table', 13),
+(26, '2024_11_10_052746_create_audit_trails_table', 14);
 
 -- --------------------------------------------------------
 
@@ -305,7 +424,8 @@ INSERT INTO `par_supplies` (`id`, `user_id`, `supply_id`, `category_id`, `par_id
 (1, 1, 2, 7, 1, NULL, 0.00, 2.00, 'Laptop', '27', 'Xyla Galena', 'unserviceable', '2024-10-18 13:07:52', '2024-10-18 13:43:44'),
 (2, 1, 4, 2, 1, NULL, 500.00, 1.00, 'A4 Printing Paper', '27', 'Xyla Galena', 'return', '2024-10-18 13:16:30', '2024-10-18 13:44:33'),
 (3, 1, 3, 2, 1, NULL, 800.00, 1.00, 'Ballpoint Pen', '27', 'Xyla Galena', 'issued', '2024-10-18 13:18:10', '2024-10-18 13:18:10'),
-(4, 1, 2, 7, 2, NULL, 0.00, 1.00, 'Laptop', '26', 'Gisela Mcdaniel', 'issued', '2024-10-18 13:46:44', '2024-10-18 13:46:44');
+(4, 1, 2, 7, 2, NULL, 0.00, 1.00, 'Laptop', '26', 'Gisela Mcdaniel', 'issued', '2024-10-18 13:46:44', '2024-10-18 13:46:44'),
+(5, 29, 3, 2, 4, NULL, 70.00, 1.00, 'Ballpoint Pen', '27', 'Xyla Galena', 'issued', '2024-11-09 22:48:54', '2024-11-09 22:48:54');
 
 -- --------------------------------------------------------
 
@@ -360,9 +480,9 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (28, 'App\\Models\\User', 26, 'main', '0a6879c89c2b9a2fd3d023a76b7d181176bb222c96e6a3c40e543d832dbc6dc4', '[\"*\"]', '2024-09-26 16:41:36', NULL, '2024-09-26 15:35:25', '2024-09-26 16:41:36'),
 (29, 'App\\Models\\User', 1, 'main', '0057e681fc53854d95838c24d2cc083d81ddddddf0a33df57be7b0f90a436db1', '[\"*\"]', '2024-10-18 14:14:29', NULL, '2024-10-18 05:05:06', '2024-10-18 14:14:29'),
 (30, 'App\\Models\\User', 27, 'main', '1f5ea9953f36f3027bf4842382311035d5b4767695b983c50e66f0e18d106e2d', '[\"*\"]', '2024-10-18 14:26:03', NULL, '2024-10-18 05:11:30', '2024-10-18 14:26:03'),
-(31, 'App\\Models\\User', 1, 'main', 'e7f39f3071130b8b5f6b189b8d35a0a2a20608a8fc7b9c095c28de6b2a855657', '[\"*\"]', '2024-11-07 14:50:17', NULL, '2024-11-06 11:12:02', '2024-11-07 14:50:17'),
-(34, 'App\\Models\\User', 27, 'main', '2d8509645186894f2f24699910636c1b909d8c6f0fb4aaaf181d11e48e28da04', '[\"*\"]', '2024-11-07 13:19:01', NULL, '2024-11-07 12:26:43', '2024-11-07 13:19:01'),
-(35, 'App\\Models\\User', 27, 'main', '7030abed73dadacd3dfe19372ea6009a657d57893b67a42dda862fa52daff477', '[\"*\"]', '2024-11-07 13:55:09', NULL, '2024-11-07 13:52:29', '2024-11-07 13:55:09');
+(31, 'App\\Models\\User', 1, 'main', 'e7f39f3071130b8b5f6b189b8d35a0a2a20608a8fc7b9c095c28de6b2a855657', '[\"*\"]', '2024-11-09 23:45:11', NULL, '2024-11-06 11:12:02', '2024-11-09 23:45:11'),
+(35, 'App\\Models\\User', 27, 'main', '7030abed73dadacd3dfe19372ea6009a657d57893b67a42dda862fa52daff477', '[\"*\"]', '2024-11-07 13:55:09', NULL, '2024-11-07 13:52:29', '2024-11-07 13:55:09'),
+(36, 'App\\Models\\User', 29, 'main', 'a121f4be69d9f99890630b8104305ce88d5a9c6588d385a36ed83906de0056b8', '[\"*\"]', '2024-11-09 23:13:24', NULL, '2024-11-09 22:40:42', '2024-11-09 23:13:24');
 
 -- --------------------------------------------------------
 
@@ -439,7 +559,8 @@ CREATE TABLE `receivings` (
 
 INSERT INTO `receivings` (`id`, `user_id`, `doc_id`, `date_arrived`, `supplier`, `created_at`, `updated_at`) VALUES
 (1, 1, '00001', '2024-10-19', 'Raphael Craft', '2024-10-18 05:07:19', '2024-10-18 05:07:19'),
-(2, 1, '00002', '2024-11-08', 'Raphael Craft', '2024-11-06 12:14:05', '2024-11-06 12:14:05');
+(2, 1, '00002', '2024-11-08', 'Raphael Craft', '2024-11-06 12:14:05', '2024-11-06 12:14:05'),
+(3, 1, '00003', '2024-11-14', 'Raphael Craft', '2024-11-09 21:50:26', '2024-11-09 21:50:26');
 
 -- --------------------------------------------------------
 
@@ -471,7 +592,10 @@ INSERT INTO `requisition_slops` (`id`, `user_id`, `ris_number`, `status`, `submi
 (5, 27, '00005', 'issued', 1, 1, '2024-10-18 20:06:57', '2024-10-18 11:49:49', '2024-10-18 12:06:57'),
 (6, 27, '00006', 'issued', 1, 1, '2024-10-18 20:00:58', '2024-10-18 11:57:01', '2024-10-18 12:00:58'),
 (7, 27, '00007', 'issued', 1, 1, '2024-11-06 19:22:10', '2024-11-06 11:16:14', '2024-11-06 11:22:10'),
-(8, 27, '00008', 'pending', 0, NULL, NULL, '2024-11-07 12:27:09', '2024-11-07 12:27:09');
+(8, 27, '00008', 'issued', 1, 1, '2024-11-10 03:55:51', '2024-11-07 12:27:09', '2024-11-09 21:53:43'),
+(9, 27, '00009', 'issued', 1, 1, '2024-11-10 05:59:00', '2024-11-09 21:58:23', '2024-11-09 21:59:00'),
+(10, 27, '00010', 'issued', 1, 1, '2024-11-10 06:10:04', '2024-11-09 22:03:52', '2024-11-09 22:10:04'),
+(11, 27, '00011', 'issued', 1, 1, '2024-11-10 06:14:51', '2024-11-09 22:13:36', '2024-11-09 22:14:51');
 
 -- --------------------------------------------------------
 
@@ -543,7 +667,13 @@ INSERT INTO `ris_supplies` (`id`, `user_id`, `department_id`, `supply_id`, `cate
 (14, 27, '42', 3, 2, 800.00, 800.00, 1, 'Ballpoint Pen', 0, 1, 1, 800.00, '6', 'issued', '2024-10-18 11:59:50', '2024-10-18 12:00:52'),
 (15, 27, '42', 2, 7, 0.00, 0.00, 2, 'Laptop', 0, 2, 0, 0.00, '7', 'not available', '2024-11-06 11:16:27', '2024-11-06 11:17:18'),
 (16, 27, '42', 4, 2, 500.00, 2000.00, 4, 'A4 Printing Paper', 0, 2, 0, 0.00, '7', 'not available', '2024-11-06 11:16:34', '2024-11-06 11:21:55'),
-(17, 27, '42', 2, 7, 8000.00, 8000.00, 1, 'Laptop', 0, 0, NULL, NULL, '8', 'pending', '2024-11-07 12:30:00', '2024-11-07 12:30:00');
+(17, 27, '42', 2, 7, 8000.00, 8000.00, 1, 'Laptop', 0, 0, NULL, NULL, '8', 'pending', '2024-11-07 12:30:00', '2024-11-07 12:30:00'),
+(18, 27, '42', 3, 2, 70.00, 140.00, 2, 'Ballpoint Pen', 0, 0, NULL, NULL, '9', 'pending', '2024-11-09 21:58:33', '2024-11-09 21:58:33'),
+(19, 27, '42', 4, 2, 70.00, 210.00, 3, 'A4 Printing Paper', 0, 0, NULL, NULL, '9', 'pending', '2024-11-09 21:58:41', '2024-11-09 21:58:41'),
+(20, 27, '42', 3, 2, 70.00, 140.00, 2, 'Ballpoint Pen', 0, 1, 2, 140.00, '10', 'issued', '2024-11-09 22:04:00', '2024-11-09 22:09:16'),
+(21, 27, '42', 4, 2, 70.00, 2380.00, 19, 'A4 Printing Paper', 0, 1, 19, 1330.00, '10', 'issued', '2024-11-09 22:04:05', '2024-11-09 22:09:29'),
+(22, 27, '42', 2, 7, 8000.00, 184000.00, 7, 'Laptop', 0, 1, 7, 56000.00, '10', 'issued', '2024-11-09 22:04:11', '2024-11-09 22:08:57'),
+(23, 27, '42', 3, 2, 70.00, 840.00, 12, 'Ballpoint Pen', 0, 1, 12, 840.00, '11', 'issued', '2024-11-09 22:14:15', '2024-11-09 22:14:46');
 
 -- --------------------------------------------------------
 
@@ -608,9 +738,9 @@ CREATE TABLE `supplies` (
 
 INSERT INTO `supplies` (`id`, `user_id`, `supply_name`, `category_id`, `description`, `unit`, `image_url`, `qnty`, `price`, `created_at`, `updated_at`) VALUES
 (1, '', 'sdfsdf', '5', 'sdfsdf', 'pack', 'media/kqhIi1OUZ9445EX2W03upyuQSq7Ub6Sdi9mvBKun.jpg', 0, NULL, '2024-09-26 10:13:15', '2024-11-06 11:23:18'),
-(2, '', 'Laptop', '7', 'Lenovo', 'piece', 'media/Rzsj2syNuI6RvCQ4nK1aBwAzy7qu9USgdBNrkVpP.jpg', 7, 8000, '2024-09-26 10:33:34', '2024-11-06 12:14:29'),
-(3, '', 'Ballpoint Pen', '2', 'Blue ink, medium tip ballpoint pen.', 'box', 'media/YakdZNaHLWZunem4bXXeQDl6Vu6TgXOtlwochnAT.png', 103, 70, '2024-09-26 10:34:35', '2024-11-06 12:14:46'),
-(4, '', 'A4 Printing Paper', '2', '500 sheets per ream, 80 GSM, white.', 'box', 'media/0oRAyby9LdBQEnPTQHpxui2hcEIN1kuFlXr4pXwB.png', 19, 70, '2024-09-26 10:35:09', '2024-11-06 12:15:03'),
+(2, '', 'Laptop', '7', 'Lenovo', 'piece', 'media/Rzsj2syNuI6RvCQ4nK1aBwAzy7qu9USgdBNrkVpP.jpg', 0, 8000, '2024-09-26 10:33:34', '2024-11-09 22:08:57'),
+(3, '', 'Ballpoint Pen', '2', 'Blue ink, medium tip ballpoint pen.', 'box', 'media/YakdZNaHLWZunem4bXXeQDl6Vu6TgXOtlwochnAT.png', 88, 70, '2024-09-26 10:34:35', '2024-11-09 22:48:54'),
+(4, '', 'A4 Printing Paper', '2', '500 sheets per ream, 80 GSM, white.', 'box', 'media/0oRAyby9LdBQEnPTQHpxui2hcEIN1kuFlXr4pXwB.png', 0, 70, '2024-09-26 10:35:09', '2024-11-09 22:09:29'),
 (5, '', 'Post-it Notes', '2', '3x3 inch sticky notes, 100 sheets per pad, yellow.', 'piece', 'media/fcEqrWLHgw6LolutD9337btQ4QisKxn0nKxUp92n.jpg', 0, NULL, '2024-09-26 10:36:25', '2024-11-06 11:22:48');
 
 -- --------------------------------------------------------
@@ -648,6 +778,7 @@ INSERT INTO `transaction_logs` (`id`, `document_id`, `deadline`, `date_submitted
 CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `department_id` int(255) DEFAULT NULL,
+  `photo` text DEFAULT NULL,
   `lastname` varchar(255) NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `middle_name` varchar(255) DEFAULT NULL,
@@ -667,11 +798,12 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `department_id`, `lastname`, `firstname`, `middle_name`, `position`, `role`, `email`, `contact_number`, `username`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, NULL, 'General', 'Admin', NULL, 'supply office officer', 'general admin', 'admin@gmail.com', NULL, '', NULL, '$2y$10$jT8C2A3nQBXYN4y6/lBg5.dI39BXRNekX6u5wfwCJi9bGmEdzas1e', NULL, NULL, NULL),
-(26, 41, 'Mcdaniel', 'Gisela', 'sdfsadfsadf', 'Backend Developer', 'admin', 'hulej@mailinator.com', '1232323', 'myqiqijyfi', NULL, '$2y$12$q5RGk7d.BXZ0.7EeZrP2texrqZjKY0XzWkqWB21HoCJwhQkxGEGGS', NULL, '2024-09-25 12:05:08', '2024-09-26 15:35:23'),
-(27, 42, 'Galena', 'Xyla', 'mamamam', 'Aute fugiat adipisi', 'admin', 'moqenihi@mailinator.com', '66', 'bubuvajin', NULL, '$2y$12$QsfneX6lR5G7rgu1Xdp7aujs.XubAQZLdGLFEDBtzw.YZPvFQUX8a', NULL, '2024-09-25 16:08:09', '2024-11-07 12:26:38'),
-(28, NULL, 'Kirk', 'Jasper', NULL, 'Deserunt non ullamco', 'supply office', 'dumurumyju@mailinator.com', '139', 'vycyvof', NULL, '$2y$12$QYjVyFj9Hg6Xnn7ewHdKze07bjdWQRm7r/lNZ39prvaoInMEGGVGy', NULL, '2024-09-25 16:49:51', '2024-09-26 12:34:23');
+INSERT INTO `users` (`id`, `department_id`, `photo`, `lastname`, `firstname`, `middle_name`, `position`, `role`, `email`, `contact_number`, `username`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'media/gxQqlpecMtEJoRdHrxtvZ1W09n6VOsOkFG6ddoHU.jpg', 'Juan', 'Dela Cruz', NULL, 'supply officer', 'general admin', 'admin@gmail.com', NULL, '', NULL, '$2y$12$VU.h8iy6dO7jdQ9WZzTQhOrVog/KlDXljym00NCaSuyiulbTjWSOi', NULL, NULL, '2024-11-09 23:04:01'),
+(26, 41, NULL, 'Mcdaniel', 'Gisela', 'sdfsadfsadf', 'Backend Developer', 'admin', 'hulej@mailinator.com', '1232323', 'myqiqijyfi', NULL, '$2y$12$q5RGk7d.BXZ0.7EeZrP2texrqZjKY0XzWkqWB21HoCJwhQkxGEGGS', NULL, '2024-09-25 12:05:08', '2024-09-26 15:35:23'),
+(27, 42, NULL, 'Galena', 'Xyla', 'mamamam', 'Aute fugiat adipisi', 'admin', 'moqenihi@mailinator.com', '66', 'bubuvajin', NULL, '$2y$12$QsfneX6lR5G7rgu1Xdp7aujs.XubAQZLdGLFEDBtzw.YZPvFQUX8a', NULL, '2024-09-25 16:08:09', '2024-11-07 12:26:38'),
+(28, NULL, NULL, 'Kirk', 'Jasper', NULL, 'Deserunt non ullamco', 'supply office', 'dumurumyju@mailinator.com', '139', 'vycyvof', NULL, '$2y$12$QYjVyFj9Hg6Xnn7ewHdKze07bjdWQRm7r/lNZ39prvaoInMEGGVGy', NULL, '2024-09-25 16:49:51', '2024-09-26 12:34:23'),
+(29, 47, 'media/RSYrthZWs74zO1D4km6rnv1xII2yRo9m6AA02rNx.jpg', 'Xavier', 'Luke', NULL, 'Accusamus ut sapient', 'supply office', 'sepyxu@mailinator.com', '20', 'sefosuw', NULL, '$2y$12$tYmXQL1zXgHAaD2Iwek9QOBR4cRqY2E09uqh.r7.YE6Og1w4BZrF6', NULL, '2024-11-09 22:17:58', '2024-11-09 23:03:44');
 
 -- --------------------------------------------------------
 
@@ -708,6 +840,13 @@ ALTER TABLE `applicants`
   ADD KEY `applicants_user_id_foreign` (`user_id`);
 
 --
+-- Indexes for table `audit_trails`
+--
+ALTER TABLE `audit_trails`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `audit_trails_user_id_foreign` (`user_id`);
+
+--
 -- Indexes for table `categories`
 --
 ALTER TABLE `categories`
@@ -739,6 +878,13 @@ ALTER TABLE `documents`
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Indexes for table `head_teachers`
+--
+ALTER TABLE `head_teachers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `head_teachers_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `media`
@@ -876,7 +1022,13 @@ ALTER TABLE `annual_procurement_plans`
 -- AUTO_INCREMENT for table `applicants`
 --
 ALTER TABLE `applicants`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT for table `audit_trails`
+--
+ALTER TABLE `audit_trails`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -888,13 +1040,13 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `clien_pars`
 --
 ALTER TABLE `clien_pars`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `documents`
@@ -909,28 +1061,34 @@ ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `head_teachers`
+--
+ALTER TABLE `head_teachers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `media`
 --
 ALTER TABLE `media`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `par_supplies`
 --
 ALTER TABLE `par_supplies`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `purchase_documents`
@@ -948,13 +1106,13 @@ ALTER TABLE `received_supplies`
 -- AUTO_INCREMENT for table `receivings`
 --
 ALTER TABLE `receivings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `requisition_slops`
 --
 ALTER TABLE `requisition_slops`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `return_statuses`
@@ -966,7 +1124,7 @@ ALTER TABLE `return_statuses`
 -- AUTO_INCREMENT for table `ris_supplies`
 --
 ALTER TABLE `ris_supplies`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `signatures`
@@ -996,7 +1154,7 @@ ALTER TABLE `transaction_logs`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `websockets_statistics_entries`
@@ -1021,6 +1179,12 @@ ALTER TABLE `applicants`
   ADD CONSTRAINT `applicants_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `audit_trails`
+--
+ALTER TABLE `audit_trails`
+  ADD CONSTRAINT `audit_trails_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `clien_pars`
 --
 ALTER TABLE `clien_pars`
@@ -1031,6 +1195,12 @@ ALTER TABLE `clien_pars`
 --
 ALTER TABLE `documents`
   ADD CONSTRAINT `documents_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `head_teachers`
+--
+ALTER TABLE `head_teachers`
+  ADD CONSTRAINT `head_teachers_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `media`

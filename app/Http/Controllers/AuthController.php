@@ -29,6 +29,35 @@ class AuthController extends Controller
         return response(compact('user', 'departments', 'categories', 'supplier', 'supplies'));
     }
 
+    public function edit(User $user, Request $request)
+    {
+        $payload = $request->validate([
+            "lastname" => 'required',
+            "firstname" => 'required',
+            "email" => 'required|unique:users,email,'.$user->id,
+            "role" => 'required',
+        ]);
+
+        if(isset($request->photo)){
+            $request->validate([
+                'photo' => 'mimes:png,jpg'
+            ]);
+            $payload['photo'] = $request->file('photo')->store('media', 'public');
+        }
+
+        if(isset($request->password)){
+             $request->validate([
+                'password' => 'required|confirmed'
+            ]);
+
+            $payload['password'] = Hash::make($request->password);
+        }
+
+        DB::transaction(function () use ($request, $payload, $user){
+            $user->update($payload);
+        });
+    }
+
     public function login(LoginRequest $request){
         $credentials = $request->validated();
 

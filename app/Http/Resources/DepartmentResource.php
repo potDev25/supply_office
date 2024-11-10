@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Requests\RisSuppliesRequest;
 use App\Models\Document;
+use App\Models\RequisitionSlop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,14 +25,18 @@ class DepartmentResource extends JsonResource
             'department_type' => $this->department_type,
             'name' => $this->name,
             'created_at' => $this->created_at,
-            'files' => Document::where('department_id', $this->id)->count(),
+            'files' => RequisitionSlop::select('requisition_slops.*')
+                ->join('users', 'requisition_slops.user_id', '=', 'users.id')
+                ->where('users.department_id', $this->id)
+                ->count(),
             'date' => $this->get_date($request)
         ];
     }
 
-    public function get_date($request){
-        $date = Carbon::now()->format('F'); ;
-        if(isset($request->date)){
+    public function get_date($request)
+    {
+        $date = Carbon::now()->format('F');;
+        if (isset($request->date)) {
             return $request->date;
         }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Department;
 use App\Models\RequisitionSlop;
 use App\Models\RisSupplies;
 use App\Models\Supply;
@@ -16,27 +17,39 @@ class RisController extends Controller
      */
     public function index(Request $request)
     {
-        if(auth()->user()->role == 'general admin'){
-            $data = RequisitionSlop::select('requisition_slops.*', 'users.lastname', 'users.firstname')
-            ->join('users', 'users.id', '=', 'requisition_slops.user_id')
-            ->where('status', 'pending')
-            ->orderBy('created_at', 'DESC')
-            ->paginate($request->limit);
-        }else{
+        $department = null;
+        if (auth()->user()->role == 'general admin') {
+            if ($request->filled('department_id')) {
+                $data = RequisitionSlop::select('requisition_slops.*', 'users.lastname', 'users.firstname')
+                    ->join('users', 'users.id', '=', 'requisition_slops.user_id')
+                    ->where('status', 'issued')
+                    ->where('users.department_id', $request->department_id)
+                    ->orderBy('created_at', 'DESC')
+                    ->paginate($request->limit);
+
+                $department = Department::where('id', $request->department_id)->first();
+            }else{
+                $data = RequisitionSlop::select('requisition_slops.*', 'users.lastname', 'users.firstname')
+                    ->join('users', 'users.id', '=', 'requisition_slops.user_id')
+                    ->where('status', 'pending')
+                    ->orderBy('created_at', 'DESC')
+                    ->paginate($request->limit);
+            }
+        } else {
             $query = RequisitionSlop::query();
 
-            $query->when($request->filled('status'), function($q) use($request) {
+            $query->when($request->filled('status'), function ($q) use ($request) {
                 $q->where('status', $request->status);
             });
 
             $data = $query->select('requisition_slops.*', 'users.lastname', 'users.firstname')
-            ->join('users', 'users.id', '=', 'requisition_slops.user_id')
-            ->where('user_id', auth()->user()->id)
-            ->orderBy('created_at', 'DESC')
-            ->paginate($request->limit);
+                ->join('users', 'users.id', '=', 'requisition_slops.user_id')
+                ->where('user_id', auth()->user()->id)
+                ->orderBy('created_at', 'DESC')
+                ->paginate($request->limit);
         }
 
-        return response($data);
+        return response(compact('department', 'data'));
     }
 
     /**
@@ -44,7 +57,7 @@ class RisController extends Controller
      */
     public function store()
     {
-       
+
         // Get the latest supplier, if it exists
         $latestSupplier = RequisitionSlop::latest('id')->first();
 
@@ -54,7 +67,7 @@ class RisController extends Controller
         // Format the ID with leading zeros
         $formattedId = sprintf('%05d', $latestId);
 
-        DB::transaction(function () use($formattedId) {
+        DB::transaction(function () use ($formattedId) {
             RequisitionSlop::create([
                 'ris_number' => $formattedId,
                 'user_id' => auth()->user()->id
@@ -82,25 +95,26 @@ class RisController extends Controller
         return response($data);
     }
 
-    public function supplyUpdate(RisSupplies $id, Request $request){
+    public function supplyUpdate(RisSupplies $id, Request $request)
+    {
         $payload = $request->validate([
             'availbale' => 'required',
             'qnty' => 'required_if:available,1'
         ]);
 
-        DB::transaction(function () use($payload, $id) {
+        DB::transaction(function () use ($payload, $id) {
             $price = $payload['availbale'] == 1 ? $payload['qnty'] : 0;
             $payload['issued_total_price'] = (float)$price * $id->price;
-            $payload['issued_qnty'] = $payload['availbale'] == 1 ? $payload['issued_qnty'] : 0;
+            $payload['issued_qnty'] = $payload['availbale'] == 1 ? $payload['qnty'] : 0;
             $payload['status'] = $payload['availbale'] == 1 ? 'issued' : 'not available';
 
-            if($payload['availbale'] == 2){
+            if ($payload['availbale'] == 2) {
                 $payload['qnty'] = $id->qnty;
             }
 
             $id->update($payload);
 
-            if($payload['availbale'] == 1){
+            if ($payload['availbale'] == 1) {
                 $supply = Supply::where('id', $id->supply_id)->first();
                 $supply->qnty = $supply->qnty -  $payload['issued_qnty'];
                 $supply->save();
