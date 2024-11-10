@@ -20,7 +20,13 @@ class AuthController extends Controller
 {
 
     public function index(Request $request){
-        $user = $request->user();
+        if(auth()->user()->role === 'general admin' || auth()->user()->role === 'supply office'){
+            $user = $request->user();
+        }else{
+            $user = User::select('users.*', 'departments.department_name')
+            ->join('departments', 'departments.id', '=', 'users.department_id')
+            ->where('users.id',auth()->user()->id)->first();
+        }
         $departments = Department::orderBy('department_name', 'ASC')->get();
         $categories = Category::orderBy('name', 'ASC')->get();
         $supplier = Supplier::where('status', 'Active')->orderBy('supplier_name', 'ASC')->get();
