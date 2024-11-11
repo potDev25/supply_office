@@ -41,7 +41,6 @@ class AuthController extends Controller
             "lastname" => 'required',
             "firstname" => 'required',
             "email" => 'required|unique:users,email,'.$user->id,
-            "role" => 'required',
         ]);
 
         if(isset($request->photo)){

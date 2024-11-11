@@ -212,6 +212,12 @@ class StockController extends Controller
 
     public function approveForm(RequisitionSlop $requesition)
     {
+        $check = HeadTeacher::where('user_id', auth()->user()->id)->first();
+
+        if(!$check){
+            return response(['message_error' => 'Unable to approve this form. Please upload E-signature'], 422);
+        }
+
         $requesition->status = 'issued';
         $requesition->submit = 1;
         $requesition->approved_by = auth()->user()->id;
@@ -219,7 +225,7 @@ class StockController extends Controller
         $requesition->save();
 
         $data = [
-            'action' => 'RIS Approve ('.$requesition->ris_number.')',
+            'action' => 'RIS Approval ('.$requesition->ris_number.')',
             'type' => 'RIS'
         ];
         event(new AuditStoreEvent($data));

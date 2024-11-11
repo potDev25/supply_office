@@ -18,7 +18,7 @@ class RisController extends Controller
     public function index(Request $request)
     {
         $department = null;
-        if (auth()->user()->role == 'general admin') {
+        if (auth()->user()->role == 'general admin' || auth()->user()->role == 'supply office') {
             if ($request->filled('department_id')) {
                 $data = RequisitionSlop::select('requisition_slops.*', 'users.lastname', 'users.firstname')
                     ->join('users', 'users.id', '=', 'requisition_slops.user_id')
@@ -32,6 +32,7 @@ class RisController extends Controller
                 $data = RequisitionSlop::select('requisition_slops.*', 'users.lastname', 'users.firstname')
                     ->join('users', 'users.id', '=', 'requisition_slops.user_id')
                     ->where('status', 'pending')
+                    ->where('submit', 1)
                     ->orderBy('created_at', 'DESC')
                     ->paginate($request->limit);
             }
