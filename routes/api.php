@@ -193,6 +193,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::controller(ReportV2Controller::class)->group(function () {
         Route::get('/reports-supply', 'index');
         Route::get('/reports-supply/export', 'export');
+        Route::get('/reports-analysis', 'analysis');
     });
 });
 

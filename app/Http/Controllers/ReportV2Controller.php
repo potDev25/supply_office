@@ -106,4 +106,38 @@ class ReportV2Controller extends Controller
 
         return Excel::download(new MonthReportExport($data), $file_name);
     }
+
+    public function analysis(Request $request)
+    {
+        $year = $request->input('year'); // Fetch the year from the frontend
+
+        $monthlyTotals = DB::table('received_supplies')
+            ->select(DB::raw("DATE_FORMAT(created_at, '%M %Y') as month_year"), DB::raw("SUM(total_price) as total_price"))
+            ->when($year, function ($query, $year) {
+                return $query->whereYear('created_at', $year);
+            })
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"))
+            ->orderBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"), 'asc')
+            ->get();
+
+        $monthlyIssuedTotals = DB::table('ris_supplies')
+            ->select(DB::raw("DATE_FORMAT(created_at, '%M %Y') as month_year"), DB::raw("SUM(issued_total_price) as total_price"))
+            ->when($year, function ($query, $year) {
+                return $query->whereYear('created_at', $year);
+            })
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"))
+            ->orderBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"), 'asc')
+            ->get();
+
+        $monthlyParTotals = DB::table('par_supplies')
+            ->select(DB::raw("DATE_FORMAT(created_at, '%M %Y') as month_year"), DB::raw("SUM(total_price) as total_price"))
+            ->when($year, function ($query, $year) {
+                return $query->whereYear('created_at', $year);
+            })
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"))
+            ->orderBy(DB::raw("DATE_FORMAT(created_at, '%Y-%m')"), 'asc')
+            ->get();
+
+        return response(compact('monthlyTotals', 'monthlyIssuedTotals', 'monthlyParTotals'));
+    }
 }
